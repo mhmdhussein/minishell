@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_helpers.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fel-ghaz <fel-ghaz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 10:46:27 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/01/21 08:44:35 by fel-ghaz         ###   ########.fr       */
+/*   Updated: 2025/01/25 15:48:47 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/minishell.h"
+#include "../..//includes/minishell.h"
 
 char *handle_dollar_digit_cases(char *result, char *value, int *i)
 {

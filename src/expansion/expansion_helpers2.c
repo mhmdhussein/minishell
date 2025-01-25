@@ -3,23 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_helpers2.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fel-ghaz <fel-ghaz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 08:45:10 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/01/21 08:47:03 by fel-ghaz         ###   ########.fr       */
+/*   Updated: 2025/01/25 15:50:23 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 int	ft_isspecial(int c)
 {
 	return (c == 33 || c == 35 || c == 37 || c == 38
 		|| (c >= 40 && c <= 47) || c == 58 || (c == 59)
-			|| c == 61 || c == 63 || c == 64 || (c >= 91 && c <= 94)
-				|| c == 96 || c == 123 || c == 125 || c == 126);
+		|| c == 61 || c == 63 || c == 64 || (c >= 91 && c <= 94)
+		|| c == 96 || c == 123 || c == 125 || c == 126);
 }
-char *ft_strjoincustom(char *s1, char *s2)
+
+char	*ft_strjoincustom(char *s1, char *s2)
 {
 	char			*join;
 	unsigned int	len1;
@@ -42,11 +43,13 @@ char *ft_strjoincustom(char *s1, char *s2)
 	free(s1);
 	return (join);
 }
-char *handle_env_variable(char *result, t_token *token, t_shell *shell, int *i)
+
+char	*handle_env_variable(char *result, t_token *token,
+	t_shell *shell, int *i)
 {
-	char *key;
-	char *env;
-	int start;
+	char	*key;
+	char	*env;
+	int		start;
 
 	(*i)++;
 	start = *i;
@@ -58,17 +61,20 @@ char *handle_env_variable(char *result, t_token *token, t_shell *shell, int *i)
 		result = ft_strjoincustom(result, env);
 	free(key);
 	(*i)--;
-	return result;
+	return (result);
 }
 
-void expand(t_token *token, t_shell *shell)
+void	expand(t_token *token, t_shell *shell)
 {
-	char *result = ft_strdup("");
-	int i = 0;
+	char	*result;
+	int		i;
 
+	i = 0;
+	result = ft_strdup("");
 	while (token->value[i])
 	{
-		if (token->value[i] == '$' && (ft_isalpha(token->value[i + 1]) || token->value[i + 1] == '_'))
+		if (token->value[i] == '$' && (ft_isalpha(token->value[i + 1])
+				|| token->value[i + 1] == '_'))
 			result = handle_env_variable(result, token, shell, &i);
 		else
 			result = appendchar(result, token->value[i]);
@@ -77,11 +83,14 @@ void expand(t_token *token, t_shell *shell)
 	free(token->value);
 	token->value = result;
 }
-void expand_number(t_token *token)
-{
-	char *result = ft_strdup("");
-	int i = 0;
 
+void	expand_number(t_token *token)
+{
+	char	*result;
+	int		i;
+
+	result = ft_strdup("");
+	i = 0;
 	while (token->value[i])
 	{
 		if (token->value[i] == '$' && ft_isdigit(token->value[i + 1]))

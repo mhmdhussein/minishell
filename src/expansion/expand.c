@@ -3,44 +3,48 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fel-ghaz <fel-ghaz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 14:39:39 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/01/21 14:04:45 by fel-ghaz         ###   ########.fr       */
+/*   Updated: 2025/01/25 15:48:26 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/minishell.h"
+#include "../../includes/minishell.h"
 
-char *handle_expansion_loop(t_env *env, t_shell *shell)
+char	*handle_expansion_loop(t_env *env, t_shell *shell)
 {
 	check_quotes(env->exp_value[env->exp_index], &env->exp_quote);
-	if (env->exp_value[env->exp_index] == '$' &&
-		(env->exp_quote == 0 || env->exp_quote == 2))
+	if (env->exp_value[env->exp_index] == '$'
+		&& (env->exp_quote == 0 || env->exp_quote == 2))
 	{
-		if (env->exp_index > 0 || env->exp_value[env->exp_index + 1] == '$' ||
-			ft_isdigit(env->exp_value[env->exp_index + 1]) ||
-			ft_isalpha(env->exp_value[env->exp_index + 1]) ||
-			env->exp_value[env->exp_index + 1] == '_')
+		if (env->exp_index > 0 || env->exp_value[env->exp_index + 1] == '$'
+			|| ft_isdigit(env->exp_value[env->exp_index + 1])
+			|| ft_isalpha(env->exp_value[env->exp_index + 1])
+			|| env->exp_value[env->exp_index + 1] == '_')
 			env->exp_result = expand_quote_cases(
-				env->exp_result, env->exp_value, &env->exp_index, shell);
+					env->exp_result, env->exp_value, &env->exp_index, shell);
 		else
-			env->exp_result = appendchar(env->exp_result, env->exp_value[env->exp_index]);
+			env->exp_result = appendchar(env->exp_result,
+					env->exp_value[env->exp_index]);
 	}
 	else
-		env->exp_result = appendchar(env->exp_result, env->exp_value[env->exp_index]);
-	return env->exp_result;
+		env->exp_result = appendchar(env->exp_result,
+				env->exp_value[env->exp_index]);
+	return (env->exp_result);
 }
-void expand_general(t_token *token, t_shell *shell)
+
+void	expand_general(t_token *token, t_shell *shell)
 {
-	t_env *env;
+	t_env	*env;
 
 	env = shell->env;
 	env->exp_quote = 0;
 	env->exp_index = 0;
 	env->exp_value = token->value;
 	env->exp_result = ft_strdup("");
-	if (env->exp_value[0] == '$' && env->exp_value[1] == '"' && env->exp_value[2] == '$')
+	if (env->exp_value[0] == '$'
+		&& env->exp_value[1] == '"' && env->exp_value[2] == '$')
 		env->exp_result = handle_dollar_quote_dollar(env);
 	while (env->exp_value[env->exp_index])
 	{
@@ -49,15 +53,13 @@ void expand_general(t_token *token, t_shell *shell)
 	}
 	free(token->value);
 	token->value = env->exp_result;
-	// env->exp_result = NULL; // chatgpt al hayl: Reset temporary variables in `t_env` to avoid polluting the state.
-	// env->exp_value = NULL;
-	// env->exp_index = 0;
-	// env->exp_quote = 0;
 }
+
 char	*expand2(t_shell *shell, char *key)
 {
-	t_env *current = shell->env;
+	t_env	*current;
 
+	current = shell->env;
 	while (current != NULL)
 	{
 		if (strcmp(current->key, key) == 0)
@@ -67,11 +69,13 @@ char	*expand2(t_shell *shell, char *key)
 	return (NULL);
 }
 
-void expand_cases(t_token *token, t_shell *shell, int *i)
+void	expand_cases(t_token *token, t_shell *shell, int *i)
 {
-	t_token *curr = token;
+	t_token	*curr;
+
+	curr = token;
 	if (ft_strchr(token->value, '\''))
-        curr = curr->next;
+		curr = curr->next;
 	else if (ft_strchr(token->value, '\"'))
 		expand_general(token, shell);
 	else
@@ -81,13 +85,16 @@ void expand_cases(t_token *token, t_shell *shell, int *i)
 		expand(token, shell);
 	}
 }
-char *remove_quotes(char *value, t_shell *shell)
-{
-	(void) shell;
-	char *result = ft_strdup("");
-	int quote = 0;
-	int i = 0;
 
+char	*remove_quotes(char *value)
+{
+	char	*result;
+	int		quote;
+	int		i;
+
+	result = ft_strdup("");
+	quote = 0;
+	i = 0;
 	while (value[i])
 	{
 		if (value[i] == '\'' && quote == 0)

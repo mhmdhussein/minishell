@@ -40,7 +40,7 @@ SRCS = ft_bzero.c \
        ft_putstr_fd.c \
        ft_striteri.c \
        ft_strmapi.c \
-       ft_libftsplit.c
+       ft_split.c
 
 BONUS_SRCS = ft_lstnew_bonus.c \
              ft_lstadd_front_bonus.c \

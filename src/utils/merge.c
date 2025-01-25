@@ -6,11 +6,11 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 18:53:19 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/12 13:02:31 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/25 14:26:02 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 t_env	*merge_split(t_env *env)
 {

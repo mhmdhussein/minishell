@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 11:32:06 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/14 18:10:42 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/25 15:43:46 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	valid_key(char *assign)
 	return (1);
 }
 
-int		update_existing(t_shell *shell, t_env *env, bool equal, bool xenv)
+int	update_existing(t_shell *shell, t_env *env, bool equal, bool xenv)
 {
 	t_env	*curr;
 
@@ -79,11 +79,11 @@ void	addexport(t_shell *shell, t_env *env)
 		if (ft_strcmp(env->key, next->key) > 0)
 		{
 			curr->next = env;
-			env->next= next;
+			env->next = next;
 			return ;
 		}
 		curr = curr->next;
-		next= next->next;
+		next = next->next;
 	}
 	curr->next = env;
 	env->next = next;
@@ -204,7 +204,6 @@ void	ft_export(t_cmd *cmd, t_shell *shell)
 		print_export(shell->xenv);
 		return ;
 	}
-
 	i = 1;
 	while (cmd->args[i])
 	{

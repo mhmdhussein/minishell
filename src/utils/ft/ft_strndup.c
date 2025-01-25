@@ -1,34 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   ft_strndup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 12:09:25 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/01/25 15:44:18 by mohhusse         ###   ########.fr       */
+/*   Created: 2025/01/25 14:32:56 by mohhusse          #+#    #+#             */
+/*   Updated: 2025/01/25 14:35:27 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "../../../includes/minishell.h"
 
-void	ft_pwd(char **args)
+char	*ft_strndup(char *s, size_t n)
 {
-	int		i;
-	char	cwd[1024];
+	char	*dup;
 
-	i = 1;
-	while (args[i])
-	{
-		if (args[i][0] == '-')
-		{
-			printf("bash: pwd: %s: invalid option\n", args[i]);
-			return ;
-		}
-		i++;
-	}
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
-		printf("%s\n", cwd);
-	else
-		perror("getcwd() error");
+	dup = (char *)malloc(n + 1);
+	if (!dup)
+		return (NULL);
+	ft_memcpy(dup, s, n);
+	dup[n] = '\0';
+	return (dup);
 }

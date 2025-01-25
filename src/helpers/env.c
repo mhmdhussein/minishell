@@ -6,11 +6,11 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 16:30:32 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/14 18:15:00 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/25 15:28:18 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 t_env	*create_env(char *key, char *value)
 {

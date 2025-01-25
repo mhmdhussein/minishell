@@ -20,8 +20,7 @@ LIBFT_DIR = includes/libft
 
 # Source files
 SRC_DIR = src/
-SRC =	src/main.c \
-		src/builtins/ft_cd.c \
+SRC =	src/builtins/ft_cd.c \
 		src/builtins/ft_echo.c \
 		src/builtins/ft_env.c \
 		src/builtins/ft_exit.c \
@@ -29,20 +28,19 @@ SRC =	src/main.c \
 		src/builtins/ft_pwd.c \
 		src/builtins/ft_unset.c \
 		src/exec/builtin.c \
-		src/helpers/split/ft_split.c \
-		src/helpers/split/processing_quotes.c \
-		src/helpers/split/string_split_utils.c \
-		src/helpers/strings/string_helpers.c \
-		src/helpers/strings/ft_strtok.c \
-		src/helpers/parsing/parser.c \
-		src/utils/sorting/merge.c \
 		src/exec/exec.c \
+		src/helpers/env_array.c \
+		src/helpers/env.c \
+		src/input/split/split_utils.c \
+		src/input/split/split.c \
+		src/input/split/token_processing.c \
+		src/utils/ft/ft_strcmp.c \
+		src/utils/ft/ft_strncpy.c \
+		src/utils/ft/ft_strndup.c \
+		src/utils/ft/ft_strtok.c \
 		src/utils/free.c \
-		src/helpers/env/env.c \
-		src/helpers/expansion/token_helpers.c \
-		src/helpers/expansion/expansion_helpers2.c \
-		src/helpers/expansion/expansion_helpers.c \
-		src/helpers/expansion/expand.c
+		src/utils/merge.c \
+		src/minishell.c \
 
 # Object files
 OBJS_DIR = build/

@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 11:11:22 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/11 18:14:23 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/25 15:43:19 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,5 @@ void	ft_exit(t_cmd *cmd, t_shell *shell)
 			exit_code = ft_atoi(cmd->args[1]);
 	}
 	shell->running = false;
-	// clean all
 	exit(exit_code);
 }
