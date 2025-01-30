@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:33:59 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/30 12:53:40 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/30 13:31:42 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,32 +44,6 @@ void	cleanup_shell(t_shell *shell)
 	}
 }
 
-t_env	*copy_env(t_env *env)
-{
-	t_env	*new_list;
-	t_env	*new_node;
-	t_env	*curr;
-
-	new_list = NULL;
-	curr = env;
-	while (curr)
-	{
-		new_node = (t_env *)malloc(sizeof(t_env));
-		if (!new_node)
-			return (NULL);
-		new_node->key = ft_strdup(curr->key);
-		if (curr->value)
-			new_node->value = ft_strdup(curr->value);
-		else
-			new_node->value = NULL;
-		new_node->equal = true;
-		new_node->next = new_list;
-		new_list = new_node;
-		curr = curr->next;
-	}
-	return (new_list);
-}
-
 /*
 init_env: imports env and transforms it into a linked list
 
@@ -89,7 +63,11 @@ void	init_env(t_shell *shell, char **envp)
 		value = ft_strtok(NULL, "");
 		new_env = create_env(key, value);
 		if (!new_env)
-			return (NULL); // free
+			return ; // free
+		if (value)
+			new_env->equal = true;
+		else
+			new_env->equal = false;
 		new_env->next = shell->env;
 		shell->env = new_env;
 		i++;
@@ -107,8 +85,6 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->running = true;
 	shell->last_exit_status = 0;
 	init_env(shell, envp);
-	shell->xenv = copy_env(shell->env);
-	shell->xenv = merge_sort(shell->xenv);
 }
 
 int	counttokens(t_token *tokens)

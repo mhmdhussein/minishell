@@ -6,35 +6,11 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 18:06:09 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/12 12:31:18 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/30 13:30:40 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-void	remove_xenv(t_shell *shell, char *key)
-{
-	t_env	*curr;
-	t_env	*prev;
-
-	curr = shell->xenv;
-	prev = NULL;
-	while (curr)
-	{
-		if (!ft_strcmp(curr->key, key))
-		{
-			if (prev)
-				prev->next = curr->next;
-			else
-				shell->xenv = curr->next;
-			free(curr->key);
-			free(curr);
-			return ;
-		}
-		prev = curr;
-		curr = curr->next;
-	}
-}
 
 void	remove_env(t_shell *shell, char *key)
 {
@@ -70,7 +46,6 @@ void	ft_unset(t_cmd *cmd, t_shell *shell)
 	while (cmd->args[i])
 	{
 		remove_env(shell, cmd->args[i]);
-		remove_xenv(shell, cmd->args[i]);
 		i++;
 	}
 }

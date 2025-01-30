@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 23:09:17 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/01/30 12:04:16 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/30 13:29:47 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ typedef struct s_cmd
 typedef struct s_shell
 {
 	t_env	*env;
-	t_env	*xenv;
 	t_cmd	*cmds;
 	bool	running;
 	int		last_exit_status;
