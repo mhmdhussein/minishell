@@ -6,16 +6,50 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 11:32:06 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/25 15:43:46 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/30 14:30:32 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	print_export(t_env *xenv)
+t_env	*copy_env(t_env *env)
 {
+	t_env	*new_list;
+	t_env	*new_node;
 	t_env	*curr;
 
+	new_list = NULL;
+	curr = env;
+	while (curr)
+	{
+		new_node = (t_env *)malloc(sizeof(t_env));
+		if (!new_node)
+			return (NULL);
+		new_node->key = ft_strdup(curr->key);
+		if (curr->value)
+		{
+			new_node->value = ft_strdup(curr->value);
+			new_node->equal = true;
+		}
+		else
+		{
+			new_node->value = NULL;
+			new_node->equal = false;
+		}
+		new_node->next = new_list;
+		new_list = new_node;
+		curr = curr->next;
+	}
+	return (new_list);
+}
+
+void	print_export(t_env *env)
+{
+	t_env	*xenv;
+	t_env	*curr;
+
+	xenv = copy_env(env);
+	xenv = merge_sort(xenv);
 	curr = xenv;
 	while (curr)
 	{
@@ -25,7 +59,6 @@ void	print_export(t_env *xenv)
 		printf("\n");
 		curr = curr->next;
 	}
-	return ;
 }
 
 int	valid_key(char *assign)
@@ -42,51 +75,26 @@ int	valid_key(char *assign)
 	return (1);
 }
 
-int	update_existing(t_shell *shell, t_env *env, bool equal, bool xenv)
+int	update_existing(t_shell *shell, t_env *env)
 {
 	t_env	*curr;
 
 	curr = shell->env;
-	if (xenv)
-		curr = shell->xenv;
 	while (curr)
 	{
 		if (!ft_strcmp(curr->key, env->key))
 		{
-			if (equal == true)
+			if (env->value)
+			{
 				curr->value = env->value;
+				if (curr->equal == false)
+					curr->equal = true;
+			}
 			return (1);
 		}
 		curr = curr->next;
 	}
 	return (0);
-}
-
-void	addexport(t_shell *shell, t_env *env)
-{
-	t_env	*curr;
-	t_env	*next;
-
-	if (!shell->xenv)
-	{
-		shell->xenv = env;
-		return ;
-	}
-	curr = shell->xenv;
-	next = curr->next;
-	while (next)
-	{
-		if (ft_strcmp(env->key, next->key) > 0)
-		{
-			curr->next = env;
-			env->next = next;
-			return ;
-		}
-		curr = curr->next;
-		next = next->next;
-	}
-	curr->next = env;
-	env->next = next;
 }
 
 void	addtoenv(t_shell *shell, t_env *env)
@@ -99,27 +107,6 @@ void	addtoenv(t_shell *shell, t_env *env)
 	while (curr->next)
 		curr = curr->next;
 	curr->next = env;
-}
-
-void	export_not_equal(char *key, t_shell *shell)
-{
-	t_env	*new_env;
-
-	if (!valid_key(key))
-	{
-		printf("bash: export: '%s': not a valid identifier\n", key);
-		return ;
-	}
-	new_env = (t_env *)malloc(sizeof(t_env));
-	if (!new_env)
-		return ;
-	new_env->key = key;
-	new_env->value = NULL;
-	new_env->equal = false;
-	new_env->next = NULL;
-	if (update_existing(shell, new_env, false, true))
-		return ;
-	addexport(shell, new_env);
 }
 
 void	export_env(char *assign, t_shell *shell)
@@ -135,64 +122,25 @@ void	export_env(char *assign, t_shell *shell)
 		printf("bash: export: '%s': not a valid identifier\n", assign);
 		return ;
 	}
-	new_env = (t_env *)malloc(sizeof(t_env));
+	new_env = create_env(key, value);
 	if (!new_env)
 		return ;
-	new_env->key = key;
-	new_env->value = value;
-	new_env->equal = true;
-	new_env->next = NULL;
-	if (!update_existing(shell, new_env, true, false))
+	if (value)
+		new_env->equal= true;
+	else
+		new_env->equal = false;
+	if (!update_existing(shell, new_env))
 		addtoenv(shell, new_env);
-}
-
-int		export_equal(char *assign, t_shell *shell)
-{
-	char	*key;
-	char	*value;
-	t_env	*new_env;
-
-	key = ft_strtok(assign, "=");
-	value = ft_strtok(NULL, "");
-	if (!valid_key(key))
-	{
-		printf("bash: export: '%s': not a valid identifier\n", assign);
-		return (0);
-	}
-	new_env = (t_env *)malloc(sizeof(t_env));
-	if (!new_env)
-		return (0);
-	new_env->key = key;
-	new_env->value = value;
-	new_env->equal = true;
-	new_env->next = NULL;
-	if (update_existing(shell, new_env, true, true))
-		return (1);
-	addexport(shell, new_env);
-	return (1);
 }
 
 void	export_arg(char *assign, t_shell *shell)
 {
-	char	*equal;
-	char	*dup;
-	int		xflag;
-
 	if (!ft_isalpha(*assign) && assign[0] != 95)
 	{
 		printf("bash: export: '%s': not a valid identifier\n", assign);
 		return ;
 	}
-	equal = ft_strchr(assign, '=');
-	if (!equal)
-		export_not_equal(assign, shell);
-	else
-	{
-		dup = ft_strdup(assign);
-		xflag = export_equal(assign, shell);
-		if (xflag)
-			export_env(dup, shell);
-	}
+	export_env(assign, shell);
 }
 
 void	ft_export(t_cmd *cmd, t_shell *shell)
@@ -201,7 +149,7 @@ void	ft_export(t_cmd *cmd, t_shell *shell)
 
 	if (!cmd->args[1])
 	{
-		print_export(shell->xenv);
+		print_export(shell->env);
 		return ;
 	}
 	i = 1;
@@ -210,5 +158,4 @@ void	ft_export(t_cmd *cmd, t_shell *shell)
 		export_arg(cmd->args[i], shell);
 		i++;
 	}
-	shell->xenv = merge_sort(shell->xenv);
 }
