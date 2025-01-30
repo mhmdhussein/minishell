@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 23:09:17 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/01/25 16:18:54 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/30 12:04:16 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,5 +117,6 @@ t_env	*merge_sort(t_env *env);
 // Free
 void	free_double_array(char **array);
 void	free_tokens(t_token *head);
+void	free_env(t_env *env);
 
 #endif

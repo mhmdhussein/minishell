@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 16:30:32 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/25 15:28:18 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/30 12:27:05 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,18 @@ t_env	*create_env(char *key, char *value)
 		free(new_node);
 		return (NULL);
 	}
-	new_node->value = ft_strdup(value);
-	if (!new_node->value)
+	if (value)
 	{
-		free(new_node->key);
-		free(new_node);
-		return (NULL);
+		new_node->value = ft_strdup(value);
+		if (!new_node->value)
+		{
+			free(new_node->key);
+			free(new_node);
+			return (NULL);
+		}
 	}
+	else
+		new_node->value = NULL;
 	new_node->next = NULL;
 	return (new_node);
 }

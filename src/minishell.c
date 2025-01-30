@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:33:59 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/25 16:48:08 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/30 12:53:40 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,13 +87,9 @@ void	init_env(t_shell *shell, char **envp)
 	{
 		key = ft_strtok(envp[i], "=");
 		value = ft_strtok(NULL, "");
-		new_env = (t_env *)malloc(sizeof(t_env));
-		new_env->key = ft_strdup(key);
-		new_env->equal = true;
-		if (value)
-			new_env->value = ft_strdup(value);
-		else
-			new_env->value = NULL;
+		new_env = create_env(key, value);
+		if (!new_env)
+			return (NULL); // free
 		new_env->next = shell->env;
 		shell->env = new_env;
 		i++;
