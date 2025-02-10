@@ -5,109 +5,113 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/15 14:39:39 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/01/25 15:48:26 by mohhusse         ###   ########.fr       */
+/*   Created: 2025/02/08 13:23:07 by mohhusse          #+#    #+#             */
+/*   Updated: 2025/02/08 15:05:21 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-char	*handle_expansion_loop(t_env *env, t_shell *shell)
+int	is_var_char(char c, int first)
 {
-	check_quotes(env->exp_value[env->exp_index], &env->exp_quote);
-	if (env->exp_value[env->exp_index] == '$'
-		&& (env->exp_quote == 0 || env->exp_quote == 2))
-	{
-		if (env->exp_index > 0 || env->exp_value[env->exp_index + 1] == '$'
-			|| ft_isdigit(env->exp_value[env->exp_index + 1])
-			|| ft_isalpha(env->exp_value[env->exp_index + 1])
-			|| env->exp_value[env->exp_index + 1] == '_')
-			env->exp_result = expand_quote_cases(
-					env->exp_result, env->exp_value, &env->exp_index, shell);
-		else
-			env->exp_result = appendchar(env->exp_result,
-					env->exp_value[env->exp_index]);
-	}
+	if (first)
+		return (ft_isalpha(c) || c == '_');
+	return (ft_isalnum(c) || c == '_');
+}
+
+char	*extract_variable_name(char *value, int *i)
+{
+	int		start;
+	int		len;
+	char	*var_name;
+
+	start = *i;
+	len = 0;
+	if(!is_var_char(value[start], 1))
+		return (NULL);
+	while (value[start + len] && is_var_char(value[start + len], 0))
+		len++;
+	var_name = ft_substr(value, start, len);
+	*i += len - 1;
+	return (var_name);
+}
+
+char	*handle_variable(char *value, int *i, t_shell *shell)
+{
+	char	*var_name;
+	char	*var_value;
+
+	(*i)++;
+	if (value[*i] == '$')
+		return (ft_strdup("42"));
+	else if (value[*i] == '?')
+		return (ft_itoa(shell->last_exit_status));
+	else if (!is_var_char(value[*i], 1))
+		return (ft_strdup(""));
+	var_name = extract_variable_name(value, i);
+	if (!var_name)
+		return (ft_strdup("$"));
+	var_value = envget(shell->env, var_name);
+	free(var_name);
+	if (var_value)
+		return (ft_strdup(var_value));
 	else
-		env->exp_result = appendchar(env->exp_result,
-				env->exp_value[env->exp_index]);
-	return (env->exp_result);
+		return (ft_strdup(""));
 }
 
-void	expand_general(t_token *token, t_shell *shell)
+char	*append_variable(char *result, char *expanded)
 {
-	t_env	*env;
+	char	*temp;
 
-	env = shell->env;
-	env->exp_quote = 0;
-	env->exp_index = 0;
-	env->exp_value = token->value;
-	env->exp_result = ft_strdup("");
-	if (env->exp_value[0] == '$'
-		&& env->exp_value[1] == '"' && env->exp_value[2] == '$')
-		env->exp_result = handle_dollar_quote_dollar(env);
-	while (env->exp_value[env->exp_index])
-	{
-		env->exp_result = handle_expansion_loop(env, shell);
-		env->exp_index++;
-	}
-	free(token->value);
-	token->value = env->exp_result;
-}
-
-char	*expand2(t_shell *shell, char *key)
-{
-	t_env	*current;
-
-	current = shell->env;
-	while (current != NULL)
-	{
-		if (strcmp(current->key, key) == 0)
-			return (current->value);
-		current = current->next;
-	}
-	return (NULL);
-}
-
-void	expand_cases(t_token *token, t_shell *shell, int *i)
-{
-	t_token	*curr;
-
-	curr = token;
-	if (ft_strchr(token->value, '\''))
-		curr = curr->next;
-	else if (ft_strchr(token->value, '\"'))
-		expand_general(token, shell);
+	temp = result;
+	if (expanded)
+		result = ft_strjoin(result, expanded);
 	else
-	{
-		expand_dollar(token, shell, i);
-		expand_number(token);
-		expand(token, shell);
-	}
+		result = ft_strjoin(result, "");
+	free(temp);
+	return (result);
 }
 
-char	*remove_quotes(char *value)
+char	*expand_token(char *value, t_shell *shell)
 {
-	char	*result;
-	int		quote;
 	int		i;
+	int		quote;
+	char	*result;
+	char	*expanded;
 
-	result = ft_strdup("");
-	quote = 0;
 	i = 0;
+	quote = 0;
+	result = ft_strdup("");
 	while (value[i])
 	{
-		if (value[i] == '\'' && quote == 0)
-			quote = 1;
-		else if (value[i] == '\'' && quote == 1)
-			quote = 0;
-		else if (value[i] == '\"' && quote == 0)
-			quote = 2;
-		else if (value[i] == '\"' && quote == 2)
-			quote = 0;
+		check_quotes(value[i], &quote);
+		if (value[i] == '$' && (quote == 0 || quote == 2) && value[i + 1])
+		{
+			expanded = handle_variable(value, &i, shell);
+			result = append_variable(result, expanded);
+			free(expanded);
+		}
 		else
 			result = appendchar(result, value[i]);
 		i++;
 	}
 	return (result);
+}
+
+void	expand_variables(t_token *tokens, t_shell *shell)
+{
+	t_token *curr;
+	char	*expanded;
+
+	curr = tokens;
+	while (curr)
+	{
+		if (curr->type == ENV_VAR)
+		{
+			expanded = expand_token(curr->value, shell);
+			free(curr->value);
+			curr->value = expanded;
+		}
+		curr = curr->next;
+	}
 }

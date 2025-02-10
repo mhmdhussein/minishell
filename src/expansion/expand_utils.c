@@ -1,27 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_helpers.c                                    :+:      :+:    :+:   */
+/*   expand_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/09 16:22:25 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/01/25 15:52:30 by mohhusse         ###   ########.fr       */
+/*   Created: 2025/02/08 14:59:25 by mohhusse          #+#    #+#             */
+/*   Updated: 2025/02/08 15:07:35 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-t_token_type	check_variable(t_token *linked_list)
-{
-	while (linked_list != NULL)
-	{
-		if (linked_list->type == ENV_VAR)
-			return (linked_list->type);
-		linked_list = linked_list->next;
-	}
-	return (-1);
-}
 
 void	check_quotes(char c, int *quote)
 {
@@ -43,33 +32,13 @@ void	check_quotes(char c, int *quote)
 
 char	*appendchar(char *str, char c)
 {
-	char	temp[2];
-	char	*new_str;
+	char	char_str[2];
+	char	*temp;
 
-	temp[1] = '\0';
-	new_str = ft_strjoincustom(str, temp);
-	return (new_str);
+	char_str[0] = c;
+	char_str[1] = '\0';
+	temp = str;
+	str = ft_strjoin(str, char_str);
+	free(temp);
+	return (str);
 }
-
-t_token	*expand_variable(t_token *tokens, t_shell *shell)
-{
-	t_token	*curr;
-	char	*new_value;
-
-	curr = tokens;
-	while (curr)
-	{
-		expand_general(curr, shell);
-		new_value = remove_quotes(curr->value, shell);
-		free(curr->value);
-		curr->value = new_value;
-		curr = curr->next;
-	}
-	return (tokens);
-}
-
-/*
-WRONG CASES:
-echo $"$"
-echo $'HO"ME'
-*/

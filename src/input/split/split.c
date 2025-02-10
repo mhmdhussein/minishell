@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:41:54 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/25 15:06:24 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/31 11:32:27 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	count_tokens(char *str)
 	}
 	while (str[i] != '\0')
 	{
-		while (str[i] != '\0' && is_space(str[i]))
+		while (str[i] != '\0' && ft_isspace(str[i]))
 			i++;
 		if (str[i] != '\0')
 		{
@@ -72,7 +72,7 @@ char	**split_input(char *str)
 	ij[1] = 0;
 	while (str[ij[0]] != '\0')
 	{
-		while (str[ij[0]] != '\0' && is_space(str[ij[0]]))
+		while (str[ij[0]] != '\0' && ft_isspace(str[ij[0]]))
 			ij[0]++;
 		if (str[ij[0]] != '\0')
 			process_delimiters(str, ij, tokens);

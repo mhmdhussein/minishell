@@ -6,11 +6,28 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 13:40:23 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/30 12:12:23 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/30 15:28:25 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void	free_cmds(t_cmd *cmds)
+{
+	t_cmd	*curr;
+	t_cmd	*next;
+
+	if (!cmds)
+		return ;
+	curr = cmds;
+	while (curr)
+	{
+		next = curr->next;
+		free_double_array(curr->args);
+		free(curr);
+		curr = next;
+	}
+}
 
 void	free_env(t_env *env)
 {

@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:27:00 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/25 16:17:46 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/02/08 14:25:17 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_token_type	determine_token_type(char *value)
 		return (APPEND);
 	if (ft_strcmp(value, "<<") == 0)
 		return (HEREDOC);
-	if (value[0] == '$')
+	if (ft_strchr(value, '$'))
 		return (ENV_VAR);
 	return (WORD);
 }

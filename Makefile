@@ -29,11 +29,14 @@ SRC =	src/builtins/ft_cd.c \
 		src/builtins/ft_unset.c \
 		src/exec/builtin.c \
 		src/exec/exec.c \
+		src/expansion/expand_utils.c \
+		src/expansion/expand.c \
 		src/helpers/env_array.c \
 		src/helpers/env.c \
 		src/input/split/split_utils.c \
 		src/input/split/split.c \
 		src/input/split/token_processing.c \
+		src/input/tokenization/tokenize.c \
 		src/utils/ft/ft_strcmp.c \
 		src/utils/ft/ft_strncpy.c \
 		src/utils/ft/ft_strndup.c \

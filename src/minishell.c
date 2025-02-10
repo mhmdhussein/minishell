@@ -6,46 +6,27 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:33:59 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/30 13:31:42 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/02/10 12:12:22 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
 /*
-cleanup_shell: free everything
+frees everything
 
 NOTE: needs fixing (NOT USABLE)
 */
 void	cleanup_shell(t_shell *shell)
 {
-	t_env	*tmp;
-	t_cmd	*cmd_tmp;
-	int		i;
-
-	while (shell->env)
-	{
-		tmp = shell->env;
-		shell->env = shell->env->next;
-		free(tmp->key);
-		free(tmp->value);
-		free(tmp);
-	}
-	while (shell->cmds)
-	{
-		cmd_tmp = shell->cmds;
-		shell->cmds = shell->cmds->next;
-		i = 0;
-		while (cmd_tmp->args && cmd_tmp->args[i])
-			free(cmd_tmp->args[i++]);
-		free(cmd_tmp->args);
-		free(cmd_tmp->args[0]);
-		free(cmd_tmp);
-	}
+	free_env(shell->env);
+	free_cmds(shell->cmds);
+	free_tokens(shell->tokens);
+	free(shell);
 }
 
 /*
-init_env: imports env and transforms it into a linked list
+imports env and transforms it into a linked list
 
 NOTE: needs memory leak fix
 */
@@ -75,13 +56,13 @@ void	init_env(t_shell *shell, char **envp)
 }
 
 /*
-init_shell: initializes shell and env
+initializes shell and env
 */
-
 void	init_shell(t_shell *shell, char **envp)
 {
 	shell->env = NULL;
 	shell->cmds = NULL;
+	shell->tokens = NULL;
 	shell->running = true;
 	shell->last_exit_status = 0;
 	init_env(shell, envp);
@@ -128,7 +109,7 @@ void	print_tokens(t_token *start)
 	current = start;
 	while (current)
 	{
-		printf("%s\n", current->value);
+		printf("%s\ttype:%d\n", current->value, current->type);
 		current = current->next;
 	}
 }
@@ -137,11 +118,15 @@ void	exec(t_shell *shell, char *input)
 {
 	char	**args;
 	t_cmd	*cmds;
+	t_token	*tokens;
 
+	tokens = tokenize(input);
+	shell->tokens = tokens;
+	expand_variables(shell->tokens, shell);
 	cmds = (t_cmd *)malloc(sizeof(t_cmd));
 	if (!cmds)
 		return ;
-	args = split_input(input);
+	args = detokenize(shell->tokens);
 	cmds->args = args;
 	cmds->next = NULL;
 	if (is_builtin(cmds->args[0]))
@@ -202,6 +187,7 @@ int	main(int argc, char **argv, char **envp)
 			add_history(input);
 			exec(&shell, input);
 		}
+		free(input);
 	}
 	return (0);
 }

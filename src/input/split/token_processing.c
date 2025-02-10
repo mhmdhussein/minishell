@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:43:53 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/25 15:06:39 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/01/31 11:32:27 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	process_and_count_token(char *str, int *i, char *token)
 		if (token)
 			token[j++] = str[*i - 1];
 		len++;
-		if (quote_char == 0 && (is_space(str[*i])
+		if (quote_char == 0 && (ft_isspace(str[*i])
 				|| check_delimiter((char []){str[*i], '\0'})))
 			break ;
 	}
