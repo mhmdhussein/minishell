@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:23:07 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/02/08 15:05:21 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/02/11 13:24:07 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,10 @@ char	*handle_variable(char *value, int *i, t_shell *shell)
 		return (ft_strdup("42"));
 	else if (value[*i] == '?')
 		return (ft_itoa(shell->last_exit_status));
+	else if (value[*i] == '\'')
+		return (ft_strdup("'"));
+	else if (value[*i] == '\"')
+		return (ft_strdup("\""));
 	else if (!is_var_char(value[*i], 1))
 		return (ft_strdup(""));
 	var_name = extract_variable_name(value, i);
