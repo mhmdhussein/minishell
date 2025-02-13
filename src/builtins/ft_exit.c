@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 11:11:22 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/25 15:43:19 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/02/11 14:22:13 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,12 @@ void	ft_exit(t_cmd *cmd, t_shell *shell)
 	int		exit_code;
 
 	exit_code = 0;
+	printf("exit\n");
 	if (cmd->args[1])
 	{
 		if (!ft_isnum(cmd->args[1]))
 		{
-			printf("bash: exit: %s: numeric argument required", cmd->args[1]);
+			printf("bash: exit: %s: numeric argument required\n", cmd->args[1]);
 			exit_code = 255;
 		}
 		else if (cmd->args[2])

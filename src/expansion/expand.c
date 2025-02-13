@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:23:07 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/02/11 13:24:07 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/02/11 15:36:08 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,20 +36,20 @@ char	*extract_variable_name(char *value, int *i)
 	return (var_name);
 }
 
-char	*handle_variable(char *value, int *i, t_shell *shell)
+char	*handle_variable(char *value, int *i, t_shell *shell, int quote)
 {
 	char	*var_name;
 	char	*var_value;
 
+	if ((value[(*i) + 1] == '\"' || value[(*i) + 1] == '\'') && quote == 0)
+		return (ft_strdup(""));
+	else if ((value[(*i) + 1] == '\"' || value[(*i) + 1] == '\'') && quote == 2)
+		return (ft_strdup("$"));
 	(*i)++;
 	if (value[*i] == '$')
 		return (ft_strdup("42"));
 	else if (value[*i] == '?')
 		return (ft_itoa(shell->last_exit_status));
-	else if (value[*i] == '\'')
-		return (ft_strdup("'"));
-	else if (value[*i] == '\"')
-		return (ft_strdup("\""));
 	else if (!is_var_char(value[*i], 1))
 		return (ft_strdup(""));
 	var_name = extract_variable_name(value, i);
@@ -67,6 +67,8 @@ char	*append_variable(char *result, char *expanded)
 {
 	char	*temp;
 
+	if (!expanded)
+		return (NULL);
 	temp = result;
 	if (expanded)
 		result = ft_strjoin(result, expanded);
@@ -89,9 +91,9 @@ char	*expand_token(char *value, t_shell *shell)
 	while (value[i])
 	{
 		check_quotes(value[i], &quote);
-		if (value[i] == '$' && (quote == 0 || quote == 2) && value[i + 1])
+		if (value[i] == '$' && (quote == 0 || quote == 2 ) && value[i + 1])
 		{
-			expanded = handle_variable(value, &i, shell);
+			expanded = handle_variable(value, &i, shell, quote);
 			result = append_variable(result, expanded);
 			free(expanded);
 		}
@@ -106,6 +108,7 @@ void	expand_variables(t_token *tokens, t_shell *shell)
 {
 	t_token *curr;
 	char	*expanded;
+	char	*temp;
 
 	curr = tokens;
 	while (curr)
@@ -116,6 +119,9 @@ void	expand_variables(t_token *tokens, t_shell *shell)
 			free(curr->value);
 			curr->value = expanded;
 		}
+		temp = curr->value;
+		curr->value = remove_quotes(curr->value);
+		free(temp);
 		curr = curr->next;
 	}
 }

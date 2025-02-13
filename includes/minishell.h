@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 23:09:17 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/02/08 15:08:28 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/02/11 14:31:00 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ typedef struct s_shell
 	int		last_exit_status;
 }	t_shell;
 
-// Split
+// Input
 char			**split_input(char *str);
 bool			input_has_unmatched_quotes(char *str);
 int				ft_isspace(char c);
@@ -92,6 +92,7 @@ int				process_and_count_token(char *str, int *i, char *token);
 char			*copy_token(char *str, int start, int end);
 void			process_token(char *str, int token_start, int *ij, char **tokens);
 int				check_delimiter(char *str);
+char 			*remove_quotes(char *value);
 
 // Tokenize
 t_token			*tokenize(char *input);

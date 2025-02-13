@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:51:38 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/31 11:32:27 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/02/11 14:40:35 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,32 @@ bool	input_has_unmatched_quotes(char *str)
 		i++;
 	}
 	return (current_quote != 0);
+}
+
+char *remove_quotes(char *value)
+{
+	char	*result;
+	int		quote;
+	int		i;
+
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+	quote = 0;
+	i = 0;
+	while (value[i])
+	{
+		if (value[i] == '\'' && quote == 0)
+			quote = 1;
+		else if (value[i] == '\'' && quote == 1)
+			quote = 0;
+		else if (value[i] == '\"' && quote == 0)
+			quote = 2;
+		else if (value[i] == '\"' && quote == 2)
+			quote = 0;
+		else
+			result = appendchar(result, value[i]);
+		i++;
+	}
+	return (result);
 }

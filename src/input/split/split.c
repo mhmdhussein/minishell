@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:41:54 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/31 11:32:27 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/02/11 14:15:23 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	count_tokens(char *str)
 	count = 0;
 	if (input_has_unmatched_quotes(str))
 	{
-		printf("Error\n");
+		printf("Error: Input has unmatched quotes\n");
 		return (-1);
 	}
 	while (str[i] != '\0')

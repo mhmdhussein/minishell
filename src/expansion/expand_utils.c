@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 14:59:25 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/02/08 15:07:35 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/02/11 14:32:54 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ char	*appendchar(char *str, char c)
 	char	char_str[2];
 	char	*temp;
 
+	if (!str)
+		return (NULL);
 	char_str[0] = c;
 	char_str[1] = '\0';
 	temp = str;

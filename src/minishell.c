@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:33:59 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/02/10 12:12:22 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/02/11 14:14:01 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,8 @@ void	exec(t_shell *shell, char *input)
 	t_token	*tokens;
 
 	tokens = tokenize(input);
+	if (!tokens)
+		return ;
 	shell->tokens = tokens;
 	expand_variables(shell->tokens, shell);
 	cmds = (t_cmd *)malloc(sizeof(t_cmd));
