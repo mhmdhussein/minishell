@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:41:54 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/02/11 14:15:23 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/03/17 11:43:24 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	process_delimiters(char *str, int *ij, char **tokens)
 		tokens[ij[1]++] = copy_token(str, token_start, ij[0]);
 	}
 	else
-		process_token(str, token_start, ij, tokens);
+		process_token(str, token_start, ij, tokens); // unnecessary function
 }
 
 char	**split_input(char *str)

@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:43:53 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/31 11:32:27 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/03/17 13:32:38 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	handle_quoted_sequence(char *str, int *i, char *quote_char)
 		*quote_char = str[*i];
 	else if (str[*i] == *quote_char)
 		*quote_char = 0;
-	(*i)++;
+	(*i)++; // remove i++ from here and add it in process_and_count_token
 	return (1);
 }
 
@@ -66,8 +66,9 @@ int	process_and_count_token(char *str, int *i, char *token)
 	{
 		handle_quoted_sequence(str, i, &quote_char);
 		if (token)
-			token[j++] = str[*i - 1];
+		token[j++] = str[*i - 1];
 		len++;
+		// put i++ here and remove it from handle_quoted_sequence
 		if (quote_char == 0 && (ft_isspace(str[*i])
 				|| check_delimiter((char []){str[*i], '\0'})))
 			break ;
@@ -84,7 +85,7 @@ char	*copy_token(char *str, int start, int end)
 	char	*token;
 
 	i = start;
-	(void)end;
+	(void)end; // using end to calculate len makes some problems?
 	len = process_and_count_token(str, &i, NULL);
 	token = (char *)malloc(sizeof(char) * (len + 1));
 	if (!token)

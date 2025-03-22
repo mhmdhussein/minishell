@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:23:07 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/02/11 15:36:08 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/03/17 12:34:44 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	*handle_variable(char *value, int *i, t_shell *shell, int quote)
 		return (ft_strdup(""));
 	var_name = extract_variable_name(value, i);
 	if (!var_name)
-		return (ft_strdup("$"));
+		return (ft_strdup("$")); //?
 	var_value = envget(shell->env, var_name);
 	free(var_name);
 	if (var_value)
@@ -67,14 +67,12 @@ char	*append_variable(char *result, char *expanded)
 {
 	char	*temp;
 
-	if (!expanded)
-		return (NULL);
 	temp = result;
 	if (expanded)
+	{
 		result = ft_strjoin(result, expanded);
-	else
-		result = ft_strjoin(result, "");
-	free(temp);
+		free(temp);
+	}
 	return (result);
 }
 
@@ -118,6 +116,7 @@ void	expand_variables(t_token *tokens, t_shell *shell)
 			expanded = expand_token(curr->value, shell);
 			free(curr->value);
 			curr->value = expanded;
+			curr->type = WORD;
 		}
 		temp = curr->value;
 		curr->value = remove_quotes(curr->value);

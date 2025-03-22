@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 14:55:53 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/11 18:17:14 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/03/17 13:17:48 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	exec_builtin(t_cmd *cmd, t_shell *shell)
 	else if (!ft_strcmp(cmd->args[0], "cd"))
 		ft_cd(cmd, shell->env);
 	else if (!ft_strcmp(cmd->args[0], "pwd"))
-		ft_pwd(cmd->args);
+		ft_pwd();
 	else if (!ft_strcmp(cmd->args[0], "export"))
 		ft_export(cmd, shell);
 	else if (!ft_strcmp(cmd->args[0], "unset"))

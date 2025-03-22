@@ -6,28 +6,18 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:09:25 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/01/25 15:44:18 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/03/17 13:17:49 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	ft_pwd(char **args)
+void	ft_pwd()
 {
-	int		i;
-	char	cwd[1024];
+	char	*cwd;
 
-	i = 1;
-	while (args[i])
-	{
-		if (args[i][0] == '-')
-		{
-			printf("bash: pwd: %s: invalid option\n", args[i]);
-			return ;
-		}
-		i++;
-	}
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
+	cwd = getcwd(NULL, 0);
+	if (cwd)
 		printf("%s\n", cwd);
 	else
 		perror("getcwd() error");

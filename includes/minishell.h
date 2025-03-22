@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 23:09:17 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/02/11 14:31:00 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/03/17 13:36:54 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,6 @@ typedef struct s_env
 	bool			equal;
 	char			*value;
 	struct s_env	*next;
-	char			*exp_result;
-	char			*exp_value;
-	int				exp_index;
-	int				exp_quote;
 }	t_env;
 
 typedef enum e_token_type
@@ -101,6 +97,7 @@ t_token			*tokenize(char *input);
 void			check_quotes(char c, int *quote);
 char			*appendchar(char *str, char c);
 void			expand_variables(t_token *tokens, t_shell *shell);
+int				is_var_char(char c, int first);
 
 // Exec
 void			exec_builtin(t_cmd *cmd, t_shell *shell);
@@ -114,7 +111,7 @@ void			ft_echo(t_cmd *cmd);
 void			ft_env(t_env *env);
 void			ft_exit(t_cmd *cmd, t_shell *shell);
 void			ft_export(t_cmd *cmd, t_shell *shell);
-void			ft_pwd(char **args);
+void			ft_pwd();
 void			ft_unset(t_cmd *cmd, t_shell *shell);
 
 // Env

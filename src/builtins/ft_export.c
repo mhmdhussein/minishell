@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 11:32:06 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/30 14:30:32 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/03/17 13:44:03 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,13 +65,13 @@ int	valid_key(char *assign)
 {
 	int	i;
 
+	if (!is_var_char(assign[0], 1))
+		return (0);
 	i = 1;
-	while (assign[i])
-	{
-		if (!ft_isalpha(assign[i]) && !ft_isdigit(assign[i]) && assign[i] != 95)
-			return (0);
+	while (assign[i] && is_var_char(assign[i], 0))
 		i++;
-	}
+	if (assign[i])
+		return (0);
 	return (1);
 }
 
@@ -109,7 +109,7 @@ void	addtoenv(t_shell *shell, t_env *env)
 	curr->next = env;
 }
 
-void	export_env(char *assign, t_shell *shell)
+void	export_arg(char *assign, t_shell *shell)
 {
 	char	*key;
 	char	*value;
@@ -133,7 +133,7 @@ void	export_env(char *assign, t_shell *shell)
 		addtoenv(shell, new_env);
 }
 
-void	export_arg(char *assign, t_shell *shell)
+/* void	export_arg(char *assign, t_shell *shell)
 {
 	if (!ft_isalpha(*assign) && assign[0] != 95)
 	{
@@ -141,7 +141,7 @@ void	export_arg(char *assign, t_shell *shell)
 		return ;
 	}
 	export_env(assign, shell);
-}
+} */
 
 void	ft_export(t_cmd *cmd, t_shell *shell)
 {

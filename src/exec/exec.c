@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 18:16:49 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/25 16:13:43 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/03/17 13:58:04 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static void	execute_child_process(t_cmd *cmd, t_shell *shell, char *full_path)
 	execve(full_path, cmd->args, env_array);
 	perror("execve");
 	free_double_array(env_array);
-	exit(1);
+	exit(0);
 }
 
 static void	wait_for_child(pid_t pid, t_shell *shell)

@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 18:06:09 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/30 13:30:40 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/03/17 13:47:35 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ void	remove_env(t_shell *shell, char *key)
 			else
 				shell->env = curr->next;
 			free(curr->key);
+			if (curr->value)
+				free(curr->value);
 			free(curr);
 			return ;
 		}
