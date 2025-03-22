@@ -2,4 +2,4 @@
 build/
 minishell
 libft.a
-.vscode
+.vscode/
