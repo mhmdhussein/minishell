@@ -105,6 +105,9 @@ bool			is_builtin(char *cmd);
 void			execute_command(t_cmd *cmd, t_shell *shell);
 char			*handle_dollar_quote_dollar(t_env *env);
 
+// Redirections
+int				redirections(t_shell *shell, t_cmd *cmd);
+
 // Builtins
 void			ft_cd(t_cmd *cmd, t_env *env);
 void			ft_echo(t_cmd *cmd);

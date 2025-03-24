@@ -37,6 +37,7 @@ SRC =	src/builtins/ft_cd.c \
 		src/input/split/split.c \
 		src/input/split/token_processing.c \
 		src/input/tokenization/tokenize.c \
+		src/redirections/redirections.c \
 		src/utils/ft/ft_strcmp.c \
 		src/utils/ft/ft_strncpy.c \
 		src/utils/ft/ft_strndup.c \

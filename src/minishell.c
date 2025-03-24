@@ -128,6 +128,11 @@ void	exec(t_shell *shell, char *input)
 	cmds = (t_cmd *)malloc(sizeof(t_cmd));
 	if (!cmds)
 		return ;
+	cmds->input_fd = -1;
+	cmds->output_fd = -1;
+	redirections(shell, cmds);
+	print_tokens(shell->tokens);
+	return ;
 	args = detokenize(shell->tokens);
 	cmds->args = args;
 	cmds->next = NULL;
