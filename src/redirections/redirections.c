@@ -60,9 +60,10 @@ char	*create_tmp(void)
 	return (name);
 }
 
-void	process_heredoc(t_token *heredoc, t_cmd *cmd, int std_out)
+void	process_heredoc(t_token *heredoc, t_cmd *cmd, int std_out, t_shell *shell)
 {
 	char	*tmpfile;
+	char	*expanded_line;
 	int		tmp_fd;
 	char	*line;
 
@@ -77,8 +78,11 @@ void	process_heredoc(t_token *heredoc, t_cmd *cmd, int std_out)
 		line = readline("");
 		if (!ft_strcmp(line, cmd->delim))
 			break ;
-		write(tmp_fd, line, ft_strlen(line));
+		expanded_line = expand_token(line, shell);
+		write(tmp_fd, expanded_line, ft_strlen(expanded_line));
 		write(tmp_fd, "\n", 1);
+		free(expanded_line);
+		free(line);
 	}
 	if (cmd->input_fd != -1)
 		close(cmd->input_fd);
@@ -184,7 +188,7 @@ void	handle_heredoc(t_shell *shell, t_cmd *cmd)
 	{
 		if (curr->type == HEREDOC)
 		{
-			process_heredoc(curr, cmd, shell->std_out);
+			process_heredoc(curr, cmd, shell->std_out, shell);
 			remove_heredoc(&shell->tokens);
 			curr = shell->tokens;
 		}
