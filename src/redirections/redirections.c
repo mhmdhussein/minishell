@@ -92,22 +92,26 @@ void	process_heredoc(t_token *heredoc, t_cmd *cmd, int std_out)
 	close(tmp_fd);
 }
 
-void	remove_redirection(t_token *tokens)
+void	remove_redirection(t_token **tokens)
 {
 	t_token	*curr;
 	t_token	*prev;
 
-	curr = tokens;
+	if (!tokens || !(*tokens))
+		return ;
+	curr = *tokens;
 	prev = NULL;
 	while (curr && curr->next)
 	{
 		if (curr->type == IN || curr->type == OUT || curr->type == APPEND)
 		{
-			if (!prev)
-				tokens = curr->next->next;
-			else
+			if (prev)
 				prev->next = curr->next->next;
+			else
+				*tokens = curr->next->next;
+			free(curr->next->value);
 			free(curr->next);
+			free(curr->value);
 			free(curr);
 			return ;
 		}
@@ -130,11 +134,12 @@ void	process_redirections(t_shell *shell, t_cmd *cmd)
 		else if (curr->type == APPEND)
 			process_append(curr, cmd);
 		if ((curr->type == IN || curr->type == OUT || curr->type == APPEND))
-			remove_redirection(shell->tokens);
-		else if (curr && curr->next)
-			curr = curr->next;
+		{
+			remove_redirection(&shell->tokens);
+			curr = shell->tokens;
+		}
 		else
-			curr = NULL;
+			curr = curr->next;
 	}
 	if (cmd->input_fd != -1)
 		close(cmd->input_fd);
@@ -142,22 +147,26 @@ void	process_redirections(t_shell *shell, t_cmd *cmd)
 		close(cmd->output_fd);
 }
 
-void	remove_heredoc(t_token *tokens)
+void	remove_heredoc(t_token **tokens)
 {
 	t_token	*curr;
 	t_token	*prev;
 
-	curr = tokens;
+	if (!tokens || !(*tokens))
+		return ;
+	curr = *tokens;
 	prev = NULL;
 	while (curr && curr->next)
 	{
 		if (curr->type == HEREDOC)
 		{
-			if (!prev)
-				tokens = curr->next->next;
-			else
+			if (prev)
 				prev->next = curr->next->next;
+			else
+				*tokens = curr->next->next;
+			free(curr->next->value);
 			free(curr->next);
+			free(curr->value);
 			free(curr);
 			return ;
 		}
@@ -176,12 +185,11 @@ void	handle_heredoc(t_shell *shell, t_cmd *cmd)
 		if (curr->type == HEREDOC)
 		{
 			process_heredoc(curr, cmd, shell->std_out);
-			remove_heredoc(shell->tokens);
+			remove_heredoc(&shell->tokens);
+			curr = shell->tokens;
 		}
-		else if (curr && curr->next)
-			curr = curr->next;
 		else
-			curr = NULL;
+			curr = curr->next;
 	}
 	if (cmd->input_fd != -1)
 		close(cmd->input_fd);

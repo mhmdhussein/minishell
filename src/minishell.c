@@ -148,37 +148,9 @@ void	exec(t_shell *shell, char *input)
 	close(shell->std_out);
 }
 
-char	*displaymessage(t_shell *shell)
-{
-	char	*path;
-	char	*s1;
-	char	*s2;
-
-	path = envget(shell->env, "PWD");
-	if (path)
-	{
-		s1 = ft_strjoin("\033[37;41;1mmicroshell😭:\033[0m\033[31m", path);
-		if (!s1)
-			return (NULL);
-		s2 = ft_strjoin(s1, "> \033[0m");
-		free(s1);
-		if (!s2)
-			return (NULL);
-		return (s2);
-	}
-	else
-	{
-		s1 = ft_strdup("\033[37;41;1mmicroshell😭\033[0m\033[31m >\033[0m ");
-		if (!s1)
-			return (NULL);
-		return (s1);
-	}
-}
-
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
-	char	*display;
 	t_shell	shell;
 
 	(void)argc;
@@ -186,10 +158,7 @@ int	main(int argc, char **argv, char **envp)
 	init_shell(&shell, envp);
 	while (shell.running)
 	{
-		display = displaymessage(&shell);
-		if (!display)
-			break ;
-		input = readline(display);
+		input = readline("\033[37;41;1mmicroshell😭:\033[0m ");
 		if (!input)
 		{
 			printf("\n");
