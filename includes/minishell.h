@@ -78,6 +78,7 @@ typedef struct s_shell
 	t_token	*tokens;
 	bool	running;
 	int		last_exit_status;
+	int		std_out;
 }	t_shell;
 
 // Input

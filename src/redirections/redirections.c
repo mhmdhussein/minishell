@@ -29,9 +29,7 @@ void	process_out(t_token *out, t_cmd *cmd)
 	cmd->output_fd = open(out->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (cmd->output_fd == -1)
 		return; // handle error
-	printf("outputfd = %i\n", cmd->output_fd);
 	dup2(cmd->output_fd, STDOUT_FILENO);
-	printf("f\n");
 }
 
 void	process_append(t_token *app, t_cmd *cmd)
@@ -44,22 +42,78 @@ void	process_append(t_token *app, t_cmd *cmd)
 	dup2(cmd->output_fd, 1);
 }
 
-void	process_heredoc()
+char	*create_tmp(void)
 {
-	printf("cry\n");
+	char	*name;
+
+	name = (char *)malloc(sizeof(char) * 2);
+	if (!name)
+		return (NULL);
+	name[0] = 'p';
+	name[1] = '\0';
+	while (access(name, F_OK) == 0)
+	{
+		name = appendchar(name, 'p');
+		if (!name)
+			return (NULL);
+	}
+	return (name);
 }
 
-void	remove_redirection(t_token **curr)
+void	process_heredoc(t_token *heredoc, t_cmd *cmd, int std_out)
 {
-	t_token	*temp;
+	char	*tmpfile;
+	int		tmp_fd;
+	char	*line;
 
-	temp = NULL;
-	if ((*curr)->next->next)
-		temp = (*curr)->next->next;
-	free((*curr)->next);
-	free((*curr));
-	*curr = temp;
+	tmpfile = create_tmp();
+	tmp_fd = open(tmpfile, O_WRONLY | O_CREAT, 0644);
+	if (tmp_fd == -1)
+		return ;
+	cmd->delim = heredoc->next->value;
+	while (1)
+	{
+		write(std_out, "> ", 2);
+		line = readline("");
+		if (!ft_strcmp(line, cmd->delim))
+			break ;
+		write(tmp_fd, line, ft_strlen(line));
+		write(tmp_fd, "\n", 1);
+	}
+	if (cmd->input_fd != -1)
+		close(cmd->input_fd);
+	cmd->input_fd = open(tmpfile, O_RDONLY);
+	if (cmd->input_fd == -1)
+		return; // handle error
+	dup2(cmd->input_fd, STDIN_FILENO);
+	free(line);
+	unlink(tmpfile);
+	free(tmpfile);
+	close(tmp_fd);
+}
 
+void	remove_redirection(t_token *tokens)
+{
+	t_token	*curr;
+	t_token	*prev;
+
+	curr = tokens;
+	prev = NULL;
+	while (curr && curr->next)
+	{
+		if (curr->type == IN || curr->type == OUT || curr->type == APPEND)
+		{
+			if (!prev)
+				tokens = curr->next->next;
+			else
+				prev->next = curr->next->next;
+			free(curr->next);
+			free(curr);
+			return ;
+		}
+		prev = curr;
+		curr = curr->next;
+	}
 }
 
 void	process_redirections(t_shell *shell, t_cmd *cmd)
@@ -75,11 +129,8 @@ void	process_redirections(t_shell *shell, t_cmd *cmd)
 			process_out(curr, cmd);
 		else if (curr->type == APPEND)
 			process_append(curr, cmd);
-		else if (curr->type == HEREDOC)
-			process_heredoc();
-		if ((curr->type == IN || curr->type == OUT || curr->type == APPEND
-			|| curr->type == HEREDOC))
-			remove_redirection(&curr);
+		if ((curr->type == IN || curr->type == OUT || curr->type == APPEND))
+			remove_redirection(shell->tokens);
 		else if (curr && curr->next)
 			curr = curr->next;
 		else
@@ -91,6 +142,51 @@ void	process_redirections(t_shell *shell, t_cmd *cmd)
 		close(cmd->output_fd);
 }
 
+void	remove_heredoc(t_token *tokens)
+{
+	t_token	*curr;
+	t_token	*prev;
+
+	curr = tokens;
+	prev = NULL;
+	while (curr && curr->next)
+	{
+		if (curr->type == HEREDOC)
+		{
+			if (!prev)
+				tokens = curr->next->next;
+			else
+				prev->next = curr->next->next;
+			free(curr->next);
+			free(curr);
+			return ;
+		}
+		prev = curr;
+		curr = curr->next;
+	}
+}
+
+void	handle_heredoc(t_shell *shell, t_cmd *cmd)
+{
+	t_token	*curr;
+
+	curr = shell->tokens;
+	while (curr)
+	{
+		if (curr->type == HEREDOC)
+		{
+			process_heredoc(curr, cmd, shell->std_out);
+			remove_heredoc(shell->tokens);
+		}
+		else if (curr && curr->next)
+			curr = curr->next;
+		else
+			curr = NULL;
+	}
+	if (cmd->input_fd != -1)
+		close(cmd->input_fd);
+}
+
 int	redirections(t_shell *shell, t_cmd *cmd)
 {
 	t_token	*curr;
@@ -99,14 +195,14 @@ int	redirections(t_shell *shell, t_cmd *cmd)
 	while (curr)
 	{
 		if ((curr->type == IN || curr->type == OUT || curr->type == APPEND
-				|| curr->type == HEREDOC) && curr->next->type != WORD)
+				|| curr->type == HEREDOC) && (!curr->next || curr->next->type != WORD))
 		{
 			printf("Syntax error\n"); // free
 			return (0);
 		}
 		curr = curr->next;
 	}
+	handle_heredoc(shell, cmd);
 	process_redirections(shell, cmd);
-	printf ("end\n");
 	return (1);
 }

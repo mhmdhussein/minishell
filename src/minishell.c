@@ -89,28 +89,16 @@ char	**detokenize(t_token *tokens)
 	int		i;
 	char	**args;
 
-	int j = 0;
-	printf("%i\n", j++);
 	curr = tokens;
-	printf("%i\n", j++);
 	args = (char **)malloc(sizeof(char *) * (counttokens(tokens) + 1));
-	printf("%i\n", j++);
 	i = 0;
-	printf("%i\n", j++);
 	while (curr)
 	{
-		printf("%ia\n", j++);
 		args[i] = curr->value;
-		printf("%ia\n", j++);
 		curr = curr->next;
-		printf("%ia\n", j++);
 		i++;
-		printf("%ia\n", j++);
-		printf("restart\n");
 	}
-	printf("end_loop\n");
 	args[i] = NULL;
-	printf("0\n");
 	return (args);
 }
 
@@ -131,6 +119,7 @@ void	exec(t_shell *shell, char *input)
 	char	**args;
 	t_cmd	*cmds;
 	t_token	*tokens;
+	int		std_in;
 
 	tokens = tokenize(input);
 	if (!tokens)
@@ -142,27 +131,21 @@ void	exec(t_shell *shell, char *input)
 		return ;
 	cmds->input_fd = -1;
 	cmds->output_fd = -1;
-	redirections(shell, cmds);
-	printf ("redirections out\n");
-	// return ;
+	shell->std_out = dup(STDOUT_FILENO);
+	std_in = dup(STDIN_FILENO);
+	if (!redirections(shell, cmds))
+		return ;
 	args = detokenize(shell->tokens);
-	printf ("111\n");
 	cmds->args = args;
-	printf ("222\n");
 	cmds->next = NULL;
-	printf("333\n");
 	if (is_builtin(cmds->args[0]))
-	{
-		printf("before_builtin\n");
 		exec_builtin(cmds, shell);
-		printf("after_builtin\n");
-	}
 	else
-	{
-		printf("before_exec\n");
 		execute_command(cmds, shell);
-		printf("after_exec\n");
-	}
+	dup2(shell->std_out, STDOUT_FILENO);
+	dup2(std_in, STDIN_FILENO);
+	close(std_in);
+	close(shell->std_out);
 }
 
 char	*displaymessage(t_shell *shell)
