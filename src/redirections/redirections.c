@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rtraoui <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:30:19 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/02/10 14:00:34 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/03/25 10:52:13 by rtraoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,9 @@ void	process_out(t_token *out, t_cmd *cmd)
 	cmd->output_fd = open(out->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (cmd->output_fd == -1)
 		return; // handle error
+	printf("outputfd = %i\n", cmd->output_fd);
 	dup2(cmd->output_fd, STDOUT_FILENO);
+	printf("f\n");
 }
 
 void	process_append(t_token *app, t_cmd *cmd)
@@ -39,7 +41,7 @@ void	process_append(t_token *app, t_cmd *cmd)
 	cmd->output_fd = open(app->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (cmd->output_fd == -1)
 		return; // handle error
-	dup2(cmd->output_fd, STDOUT_FILENO);
+	dup2(cmd->output_fd, 1);
 }
 
 void	process_heredoc()
@@ -47,21 +49,24 @@ void	process_heredoc()
 	printf("cry\n");
 }
 
-void	remove_redirection(t_token **prev, t_token **curr)
+void	remove_redirection(t_token **curr)
 {
-	(*prev)->next = (*curr)->next->next;
+	t_token	*temp;
+
+	temp = NULL;
+	if ((*curr)->next->next)
+		temp = (*curr)->next->next;
 	free((*curr)->next);
 	free((*curr));
-	*curr = *prev;
+	*curr = temp;
+
 }
 
 void	process_redirections(t_shell *shell, t_cmd *cmd)
 {
 	t_token	*curr;
-	t_token	*prev;
 
 	curr = shell->tokens;
-	prev = NULL;
 	while (curr)
 	{
 		if (curr->type == IN)
@@ -74,9 +79,11 @@ void	process_redirections(t_shell *shell, t_cmd *cmd)
 			process_heredoc();
 		if ((curr->type == IN || curr->type == OUT || curr->type == APPEND
 			|| curr->type == HEREDOC))
-			remove_redirection(&curr, &prev);
-		prev = curr;
-		curr = curr->next;
+			remove_redirection(&curr);
+		else if (curr && curr->next)
+			curr = curr->next;
+		else
+			curr = NULL;
 	}
 	if (cmd->input_fd != -1)
 		close(cmd->input_fd);
@@ -100,5 +107,6 @@ int	redirections(t_shell *shell, t_cmd *cmd)
 		curr = curr->next;
 	}
 	process_redirections(shell, cmd);
+	printf ("end\n");
 	return (1);
 }

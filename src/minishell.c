@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rtraoui <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:33:59 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/03/17 12:35:52 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/03/25 10:55:02 by rtraoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,16 +89,28 @@ char	**detokenize(t_token *tokens)
 	int		i;
 	char	**args;
 
+	int j = 0;
+	printf("%i\n", j++);
 	curr = tokens;
+	printf("%i\n", j++);
 	args = (char **)malloc(sizeof(char *) * (counttokens(tokens) + 1));
+	printf("%i\n", j++);
 	i = 0;
+	printf("%i\n", j++);
 	while (curr)
 	{
+		printf("%ia\n", j++);
 		args[i] = curr->value;
+		printf("%ia\n", j++);
 		curr = curr->next;
+		printf("%ia\n", j++);
 		i++;
+		printf("%ia\n", j++);
+		printf("restart\n");
 	}
+	printf("end_loop\n");
 	args[i] = NULL;
+	printf("0\n");
 	return (args);
 }
 
@@ -131,15 +143,26 @@ void	exec(t_shell *shell, char *input)
 	cmds->input_fd = -1;
 	cmds->output_fd = -1;
 	redirections(shell, cmds);
-	print_tokens(shell->tokens);
-	return ;
+	printf ("redirections out\n");
+	// return ;
 	args = detokenize(shell->tokens);
+	printf ("111\n");
 	cmds->args = args;
+	printf ("222\n");
 	cmds->next = NULL;
+	printf("333\n");
 	if (is_builtin(cmds->args[0]))
+	{
+		printf("before_builtin\n");
 		exec_builtin(cmds, shell);
+		printf("after_builtin\n");
+	}
 	else
+	{
+		printf("before_exec\n");
 		execute_command(cmds, shell);
+		printf("after_exec\n");
+	}
 }
 
 char	*displaymessage(t_shell *shell)
