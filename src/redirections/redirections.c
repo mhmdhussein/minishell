@@ -12,13 +12,18 @@
 
 #include "../../includes/minishell.h"
 
-void	process_in(t_token *in, t_cmd *cmd)
+void	process_in(t_token *in, t_cmd *cmd, t_shell *shell)
 {
 	if (cmd->input_fd != -1)
 		close(cmd->input_fd);
 	cmd->input_fd = open(in->next->value, O_RDONLY);
 	if (cmd->input_fd == -1)
+	{
+		dup2(shell->std_out, STDOUT_FILENO);
+		printf("-bash: %s: No such file or directory\n", in->next->value);
+		cmd->input_fd = -2;
 		return; // handle error
+	}
 	dup2(cmd->input_fd, STDIN_FILENO);
 }
 
@@ -131,8 +136,10 @@ void	process_redirections(t_shell *shell, t_cmd *cmd)
 	curr = shell->tokens;
 	while (curr)
 	{
+		if (cmd->input_fd == -2)
+			break ;
 		if (curr->type == IN)
-			process_in(curr, cmd);
+			process_in(curr, cmd, shell);
 		else if (curr->type == OUT)
 			process_out(curr, cmd);
 		else if (curr->type == APPEND)

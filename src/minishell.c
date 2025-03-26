@@ -133,15 +133,19 @@ void	exec(t_shell *shell, char *input)
 	cmds->output_fd = -1;
 	shell->std_out = dup(STDOUT_FILENO);
 	std_in = dup(STDIN_FILENO);
-	if (!redirections(shell, cmds))
+	shell->cmds = cmds;
+	if (!redirections(shell, shell->cmds))
 		return ;
-	args = detokenize(shell->tokens);
-	cmds->args = args;
-	cmds->next = NULL;
-	if (is_builtin(cmds->args[0]))
-		exec_builtin(cmds, shell);
-	else
-		execute_command(cmds, shell);
+	if (shell->tokens && shell->cmds->input_fd != -2)
+	{
+		args = detokenize(shell->tokens);
+		cmds->args = args;
+		cmds->next = NULL;
+		if (is_builtin(cmds->args[0]))
+			exec_builtin(cmds, shell);
+		else
+			execute_command(cmds, shell);
+	}
 	dup2(shell->std_out, STDOUT_FILENO);
 	dup2(std_in, STDIN_FILENO);
 	close(std_in);
