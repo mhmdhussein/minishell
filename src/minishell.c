@@ -119,7 +119,6 @@ void	exec(t_shell *shell, char *input)
 	char	**args;
 	t_cmd	*cmds;
 	t_token	*tokens;
-	int		std_in;
 
 	tokens = tokenize(input);
 	if (!tokens)
@@ -132,7 +131,7 @@ void	exec(t_shell *shell, char *input)
 	cmds->input_fd = -1;
 	cmds->output_fd = -1;
 	shell->std_out = dup(STDOUT_FILENO);
-	std_in = dup(STDIN_FILENO);
+	shell->std_in = dup(STDIN_FILENO);
 	shell->cmds = cmds;
 	if (!redirections(shell, shell->cmds))
 		return ;
@@ -147,8 +146,8 @@ void	exec(t_shell *shell, char *input)
 			execute_command(cmds, shell);
 	}
 	dup2(shell->std_out, STDOUT_FILENO);
-	dup2(std_in, STDIN_FILENO);
-	close(std_in);
+	dup2(shell->std_in, STDIN_FILENO);
+	close(shell->std_in);
 	close(shell->std_out);
 }
 

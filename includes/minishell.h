@@ -78,6 +78,7 @@ typedef struct s_shell
 	bool	running;
 	int		last_exit_status;
 	int		std_out;
+	int		std_in;
 }	t_shell;
 
 // Input
@@ -92,6 +93,7 @@ char 			*remove_quotes(char *value);
 
 // Tokenize
 t_token			*tokenize(char *input);
+void			revert_var(t_token	**tokens);
 
 // Expand
 void			check_quotes(char c, int *quote);
@@ -108,6 +110,7 @@ char			*handle_dollar_quote_dollar(t_env *env);
 
 // Redirections
 int				redirections(t_shell *shell, t_cmd *cmd);
+void			handle_heredoc(t_shell *shell, t_cmd *cmd);
 
 // Builtins
 void			ft_cd(t_cmd *cmd, t_env *env);
