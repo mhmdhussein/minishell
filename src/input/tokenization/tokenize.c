@@ -41,7 +41,6 @@ t_token	*create_token(char *split)
 		return (free(new_node), NULL);
 	new_node->type = determine_token_type(split);
 	new_node->next = NULL;
-	new_node->previous = NULL;
 	return (new_node);
 }
 
@@ -87,6 +86,7 @@ t_token	*tokenize(char *input)
 	if (!split)
 		return (NULL);
 	token_list = create_token_list(split);
+	revert_var(&token_list);
 	free_double_array(split);
 	return (token_list);
 }

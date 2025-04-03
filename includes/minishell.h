@@ -56,7 +56,6 @@ typedef struct s_token
 	char			*value;
 	t_token_type	type;
 	struct s_token	*next;
-	struct s_token	*previous;
 }	t_token;
 
 typedef struct s_cmd
@@ -78,6 +77,8 @@ typedef struct s_shell
 	t_token	*tokens;
 	bool	running;
 	int		last_exit_status;
+	int		std_out;
+	int		std_in;
 }	t_shell;
 
 // Input
@@ -92,18 +93,24 @@ char 			*remove_quotes(char *value);
 
 // Tokenize
 t_token			*tokenize(char *input);
+void			revert_var(t_token	**tokens);
 
 // Expand
 void			check_quotes(char c, int *quote);
 char			*appendchar(char *str, char c);
 void			expand_variables(t_token *tokens, t_shell *shell);
 int				is_var_char(char c, int first);
+char			*expand_token(char *value, t_shell *shell);
 
 // Exec
 void			exec_builtin(t_cmd *cmd, t_shell *shell);
 bool			is_builtin(char *cmd);
 void			execute_command(t_cmd *cmd, t_shell *shell);
 char			*handle_dollar_quote_dollar(t_env *env);
+
+// Redirections
+int				redirections(t_shell *shell, t_cmd *cmd);
+void			handle_heredoc(t_shell *shell, t_cmd *cmd);
 
 // Builtins
 void			ft_cd(t_cmd *cmd, t_env *env);

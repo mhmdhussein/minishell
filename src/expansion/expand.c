@@ -104,11 +104,13 @@ char	*expand_token(char *value, t_shell *shell)
 
 void	expand_variables(t_token *tokens, t_shell *shell)
 {
-	t_token *curr;
+	t_token	*curr;
+	t_token	*prev;
 	char	*expanded;
 	char	*temp;
 
 	curr = tokens;
+	prev = NULL;
 	while (curr)
 	{
 		if (curr->type == ENV_VAR)
@@ -118,9 +120,13 @@ void	expand_variables(t_token *tokens, t_shell *shell)
 			curr->value = expanded;
 			curr->type = WORD;
 		}
-		temp = curr->value;
-		curr->value = remove_quotes(curr->value);
-		free(temp);
+		if (!prev || prev->type != HEREDOC)
+		{
+			temp = curr->value;
+			curr->value = remove_quotes(curr->value);
+			free(temp);
+		}
+		prev = curr;
 		curr = curr->next;
 	}
 }

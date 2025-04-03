@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rtraoui <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:33:59 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/03/17 12:35:52 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/03/25 10:55:02 by rtraoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,46 +128,32 @@ void	exec(t_shell *shell, char *input)
 	cmds = (t_cmd *)malloc(sizeof(t_cmd));
 	if (!cmds)
 		return ;
-	args = detokenize(shell->tokens);
-	cmds->args = args;
-	cmds->next = NULL;
-	if (is_builtin(cmds->args[0]))
-		exec_builtin(cmds, shell);
-	else
-		execute_command(cmds, shell);
-}
-
-char	*displaymessage(t_shell *shell)
-{
-	char	*path;
-	char	*s1;
-	char	*s2;
-
-	path = envget(shell->env, "PWD");
-	if (path)
+	cmds->input_fd = -1;
+	cmds->output_fd = -1;
+	shell->std_out = dup(STDOUT_FILENO);
+	shell->std_in = dup(STDIN_FILENO);
+	shell->cmds = cmds;
+	if (!redirections(shell, shell->cmds))
+		return ;
+	if (shell->tokens && shell->cmds->input_fd != -2)
 	{
-		s1 = ft_strjoin("\033[37;41;1mmicroshell😭:\033[0m\033[31m", path);
-		if (!s1)
-			return (NULL);
-		s2 = ft_strjoin(s1, "> \033[0m");
-		free(s1);
-		if (!s2)
-			return (NULL);
-		return (s2);
+		args = detokenize(shell->tokens);
+		cmds->args = args;
+		cmds->next = NULL;
+		if (is_builtin(cmds->args[0]))
+			exec_builtin(cmds, shell);
+		else
+			execute_command(cmds, shell);
 	}
-	else
-	{
-		s1 = ft_strdup("\033[37;41;1mmicroshell😭\033[0m\033[31m >\033[0m ");
-		if (!s1)
-			return (NULL);
-		return (s1);
-	}
+	dup2(shell->std_out, STDOUT_FILENO);
+	dup2(shell->std_in, STDIN_FILENO);
+	close(shell->std_in);
+	close(shell->std_out);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
-	char	*display;
 	t_shell	shell;
 
 	(void)argc;
@@ -175,10 +161,7 @@ int	main(int argc, char **argv, char **envp)
 	init_shell(&shell, envp);
 	while (shell.running)
 	{
-		display = displaymessage(&shell);
-		if (!display)
-			break ;
-		input = readline(display);
+		input = readline("\033[37;41;1mmicroshell😭:\033[0m ");
 		if (!input)
 		{
 			printf("\n");
