@@ -61,8 +61,6 @@ typedef struct s_token
 typedef struct s_cmd
 {
 	char			**args;
-	char			*input_file;
-	char			*output_file;
 	int				input_fd;
 	int				output_fd;
 	bool			append;
@@ -111,6 +109,11 @@ char			*handle_dollar_quote_dollar(t_env *env);
 // Redirections
 int				redirections(t_shell *shell, t_cmd *cmd);
 void			handle_heredoc(t_shell *shell, t_cmd *cmd);
+
+// Pipes
+int				check_pipes(t_token *tokens);
+void			parse_commands(t_token	*tokens, t_shell *shell);
+void			handle_pipes(t_shell *shell);
 
 // Builtins
 void			ft_cd(t_cmd *cmd, t_env *env);
