@@ -20,6 +20,7 @@ void	handle_pipes(t_shell *shell)
 	int		prev_fd;
 
 	cmd = shell->cmds;
+	prev_fd = -1;
 	while (cmd)
 	{
 		if (cmd->next && pipe(pipe_fd) == -1)

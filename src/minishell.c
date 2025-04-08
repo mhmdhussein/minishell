@@ -153,6 +153,8 @@ void	exec(t_shell *shell, char *input)
 	{
 		parse_commands(shell->tokens, shell);
 		handle_pipes(shell);
+		free_cmds(shell->cmds);
+		shell->cmds = NULL;
 	}
 	else
 	{
@@ -178,6 +180,8 @@ void	exec(t_shell *shell, char *input)
 		dup2(shell->std_in, STDIN_FILENO);
 		close(shell->std_in);
 		close(shell->std_out);
+		free_cmds(shell->cmds);
+		shell->cmds = NULL;
 	}
 }
 
