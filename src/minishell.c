@@ -65,8 +65,6 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->tokens = NULL;
 	shell->running = true;
 	shell->last_exit_status = 0;
-	shell->std_out = dup(STDOUT_FILENO);
-	shell->std_in = dup(STDIN_FILENO);
 	init_env(shell, envp);
 }
 
@@ -163,6 +161,8 @@ void	exec(t_shell *shell, char *input)
 			return ;
 		cmds->input_fd = -1;
 		cmds->output_fd = -1;
+		shell->std_in = dup(STDIN_FILENO);
+		shell->std_out = dup(STDOUT_FILENO);
 		shell->cmds = cmds;
 		if (!redirections(shell, shell->cmds))
 			return ;
