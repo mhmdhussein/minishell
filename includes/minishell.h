@@ -111,8 +111,8 @@ void			execute_command(t_cmd *cmd, t_shell *shell);
 char			*handle_dollar_quote_dollar(t_env *env);
 
 // Redirections
-int				redirections(t_shell *shell, t_cmd *cmd, t_token *tokens);
-void			handle_heredoc(t_shell *shell, t_cmd *cmd, t_token *tokens);
+int				redirections(t_shell *shell, t_cmd *cmd, t_token **tokens);
+void			handle_heredoc(t_shell *shell, t_cmd *cmd, t_token **tokens);
 
 // Pipes
 int				check_pipes(t_token *tokens);

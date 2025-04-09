@@ -165,7 +165,7 @@ void	exec(t_shell *shell, char *input)
 		shell->std_in = dup(STDIN_FILENO);
 		shell->std_out = dup(STDOUT_FILENO);
 		shell->cmds = cmds;
-		if (!redirections(shell, shell->cmds, shell->tokens))
+		if (!redirections(shell, shell->cmds, &shell->tokens))
 			return ;
 		if (shell->tokens && shell->cmds->input_fd != -2)
 		{

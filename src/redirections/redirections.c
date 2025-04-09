@@ -75,11 +75,11 @@ void	remove_redirection(t_token **tokens)
 	}
 }
 
-void	process_redirections(t_shell *shell, t_cmd *cmd, t_token *tokens)
+void	process_redirections(t_shell *shell, t_cmd *cmd, t_token **tokens)
 {
 	t_token	*curr;
 
-	curr = tokens;
+	curr = *tokens;
 	while (curr)
 	{
 		if (cmd->input_fd == -2)
@@ -92,8 +92,8 @@ void	process_redirections(t_shell *shell, t_cmd *cmd, t_token *tokens)
 			process_append(curr, cmd);
 		if ((curr->type == IN || curr->type == OUT || curr->type == APPEND))
 		{
-			remove_redirection(&tokens);
-			curr = tokens;
+			remove_redirection(tokens);
+			curr = *tokens;
 		}
 		else
 			curr = curr->next;
@@ -104,11 +104,11 @@ void	process_redirections(t_shell *shell, t_cmd *cmd, t_token *tokens)
 		close(cmd->output_fd);
 }
 
-int	redirections(t_shell *shell, t_cmd *cmd, t_token *tokens)
+int	redirections(t_shell *shell, t_cmd *cmd, t_token **tokens)
 {
 	t_token	*curr;
 
-	curr = tokens;
+	curr = *tokens;
 	while (curr)
 	{
 		if ((curr->type == IN || curr->type == OUT || curr->type == APPEND
