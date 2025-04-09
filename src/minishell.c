@@ -150,6 +150,7 @@ void	exec(t_shell *shell, char *input)
 	else if (check_pipes(shell->tokens) == 1)
 	{
 		parse_commands(shell->tokens, shell);
+		shell->std_out = dup(STDOUT_FILENO);
 		handle_pipes(shell);
 		free_cmds(shell->cmds);
 		shell->cmds = NULL;
@@ -164,7 +165,7 @@ void	exec(t_shell *shell, char *input)
 		shell->std_in = dup(STDIN_FILENO);
 		shell->std_out = dup(STDOUT_FILENO);
 		shell->cmds = cmds;
-		if (!redirections(shell, shell->cmds))
+		if (!redirections(shell, shell->cmds, shell->tokens))
 			return ;
 		if (shell->tokens && shell->cmds->input_fd != -2)
 		{

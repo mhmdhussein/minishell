@@ -110,18 +110,18 @@ void	remove_heredoc(t_token **tokens)
 	}
 }
 
-void	handle_heredoc(t_shell *shell, t_cmd *cmd)
+void	handle_heredoc(t_shell *shell, t_cmd *cmd, t_token *tokens)
 {
 	t_token	*curr;
 
-	curr = shell->tokens;
+	curr = tokens;
 	while (curr)
 	{
 		if (curr->type == HEREDOC)
 		{
 			process_heredoc(curr, cmd, shell->std_out, shell);
-			remove_heredoc(&shell->tokens);
-			curr = shell->tokens;
+			remove_heredoc(&tokens);
+			curr = tokens;
 		}
 		else
 			curr = curr->next;

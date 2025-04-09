@@ -12,15 +12,50 @@
 
 #include "../../includes/minishell.h"
 
+t_token	*extract_tokens(t_token *tokens, int i)
+{
+	t_token	*curr;
+	t_token	*new_token;
+	t_token	*head;
+
+	curr = tokens;
+	head = NULL;
+	while (curr)
+	{
+		while (i)
+		{
+			if (curr->type == PIPE)
+				i--;
+			curr = curr->next;
+		}
+		while (curr && curr->type != PIPE)
+		{
+			new_token = create_token(curr->value);
+			if (!new_token)
+				return (NULL);
+			add_token(&head, &new_token);
+			curr = curr->next;
+		}
+		if (curr && curr->type == PIPE)
+			break ;
+		if (curr)
+			curr = curr->next;
+	}
+	return (head);
+}
+
 void	handle_pipes(t_shell *shell)
 {
 	t_cmd	*cmd;
 	int		pipe_fd[2];
 	pid_t	pid;
 	int		prev_fd;
+	int		i;
+	t_token	*cmd_tokens;
 
 	cmd = shell->cmds;
 	prev_fd = -1;
+	i = 0;
 	while (cmd)
 	{
 		if (cmd->next && pipe(pipe_fd) == -1)
@@ -41,6 +76,10 @@ void	handle_pipes(t_shell *shell)
 				close(pipe_fd[1]);
 			}
 			close(pipe_fd[0]);
+			cmd_tokens = extract_tokens(shell->tokens, i);
+			if (!redirections(shell, cmd, cmd_tokens))
+				return ;
+			cmd->args = detokenize(cmd_tokens);
 			if (is_builtin(cmd->args[0]))
 				exec_builtin(cmd, shell);
 			else
@@ -56,6 +95,7 @@ void	handle_pipes(t_shell *shell)
 			prev_fd = pipe_fd[0];
 			cmd = cmd->next;
 		}
+		i++;
 	}
 	while (wait(&shell->last_exit_status) > 0);
 }
@@ -101,25 +141,54 @@ t_cmd	*create_cmd()
 	return (cmd);
 }
 
-void	parse_commands(t_token	*tokens, t_shell *shell)
-{
-	t_cmd	*cmd;
-	t_cmd	*curr;
+// void	parse_commands(t_token	*tokens, t_shell *shell)
+// {
+// 	t_cmd	*cmd;
+// 	t_cmd	*curr;
 
-	while (tokens)
+// 	while (tokens)
+// 	{
+// 		cmd = create_cmd();
+// 		if (!cmd)
+// 			return ;
+// 		// cmd->args = fill_args(&tokens);
+// 		if (!shell->cmds)
+// 			shell->cmds = cmd;
+// 		else
+// 			curr->next = cmd;
+// 		curr = cmd;
+// 		if (tokens && tokens->type == PIPE)
+// 			tokens = tokens->next;
+// 	}
+// }
+
+void	parse_commands(t_token *tokens, t_shell *shell)
+{
+	t_token	*curr;
+	t_cmd	*curr_cmd;
+	t_cmd	*cmd;
+	int		i;
+
+	curr = tokens;
+	i = 1;
+	while (curr)
+	{
+		if (curr->type == PIPE)
+			i++;
+		curr = curr->next;
+	}
+	while (i--)
 	{
 		cmd = create_cmd();
 		if (!cmd)
 			return ;
-		cmd->args = fill_args(&tokens);
 		if (!shell->cmds)
 			shell->cmds = cmd;
 		else
-			curr->next = cmd;
-		curr = cmd;
-		if (tokens && tokens->type == PIPE)
-			tokens = tokens->next;
+			curr_cmd->next = cmd;
+		curr_cmd = cmd;
 	}
+
 }
 
 int	check_pipes(t_token *tokens)
