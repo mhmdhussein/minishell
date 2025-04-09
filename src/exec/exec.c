@@ -68,7 +68,7 @@ void	execute_command(t_cmd *cmd, t_shell *shell)
 	if (!full_path)
 	{
 		dup2(shell->std_out, STDOUT_FILENO);
-		printf("bash: command not found: %s\n", cmd->args[0]);
+		printf("bash: %s: command not found\n", cmd->args[0]);
 		shell->last_exit_status = 127;
 		return ;
 	}
