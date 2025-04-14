@@ -65,6 +65,7 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->tokens = NULL;
 	shell->running = true;
 	shell->last_exit_status = 0;
+	shell->pipe_mode = false;
 	init_env(shell, envp);
 }
 
@@ -149,6 +150,7 @@ void	exec(t_shell *shell, char *input)
 	}
 	else if (check_pipes(shell->tokens) == 1)
 	{
+		shell->pipe_mode = true;
 		parse_commands(shell->tokens, shell);
 		shell->std_out = dup(STDOUT_FILENO);
 		handle_pipes(shell);

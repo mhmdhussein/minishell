@@ -77,6 +77,7 @@ typedef struct s_shell
 	int		last_exit_status;
 	int		std_out;
 	int		std_in;
+	bool	pipe_mode;
 }	t_shell;
 
 // Input

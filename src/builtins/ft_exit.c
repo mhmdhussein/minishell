@@ -33,7 +33,8 @@ void	ft_exit(t_cmd *cmd, t_shell *shell)
 	int		exit_code;
 
 	exit_code = 0;
-	printf("exit\n");
+	if (!shell->pipe_mode)
+		printf("exit\n");
 	if (cmd->args[1])
 	{
 		if (!ft_isnum(cmd->args[1]))
