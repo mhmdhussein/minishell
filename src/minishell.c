@@ -132,6 +132,35 @@ void	print_cmds(t_cmd *cmds)
 	}
 }
 
+void	remove_null(t_token **tokens)
+{
+	t_token	*curr;
+	t_token	*prev;
+
+	curr = *tokens;
+	prev = NULL;
+	while (curr)
+	{
+		if (!curr->value)
+		{
+			if (prev)
+				prev->next = curr->next;
+			else
+				*tokens = curr->next;
+			free(curr);
+			if (prev)
+				curr = prev->next;
+			else
+				curr = *tokens;
+		}
+		else
+		{
+			prev = curr;
+			curr = curr->next;
+		}
+	}
+}
+
 void	exec(t_shell *shell, char *input)
 {
 	char	**args;
@@ -143,6 +172,9 @@ void	exec(t_shell *shell, char *input)
 		return ;
 	shell->tokens = tokens;
 	expand_variables(shell->tokens, shell);
+	remove_null(&shell->tokens);
+	if (!shell->tokens)
+		return ;
 	if (check_pipes(shell->tokens) == -1)
 	{
 		printf("bash: syntax error near unexpected token `|'\n");
@@ -159,6 +191,7 @@ void	exec(t_shell *shell, char *input)
 	}
 	else
 	{
+		shell->pipe_mode = false;
 		cmds = (t_cmd *)malloc(sizeof(t_cmd));
 		if (!cmds)
 			return ;

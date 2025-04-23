@@ -78,7 +78,7 @@ void	handle_pipes(t_shell *shell)
 			close(pipe_fd[0]);
 			cmd_tokens = extract_tokens(shell->tokens, i);
 			if (!redirections(shell, cmd, &cmd_tokens))
-				return ;
+				exit(1);
 			cmd->args = detokenize(cmd_tokens);
 			if (is_builtin(cmd->args[0]))
 				exec_builtin(cmd, shell);

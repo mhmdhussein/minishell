@@ -114,7 +114,10 @@ int	redirections(t_shell *shell, t_cmd *cmd, t_token **tokens)
 		if ((curr->type == IN || curr->type == OUT || curr->type == APPEND
 				|| curr->type == HEREDOC) && (!curr->next || curr->next->type != WORD))
 		{
-			printf("Syntax error\n"); // free
+			if (!curr->next)
+				printf("bash: syntax error near unexpected token `newline'\n");
+			else if (curr->next->type != WORD)
+				printf("bash: syntax error near unexpected token `%s'\n", curr->next->value); // free
 			return (0);
 		}
 		curr = curr->next;

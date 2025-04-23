@@ -40,7 +40,10 @@ void	ft_echo(t_cmd *cmd)
 	}
 	while (cmd->args[i])
 	{
-		printf("%s", cmd->args[i]);
+		if (cmd->args[i][0] == '\0')
+			printf(" ");
+		else
+			printf("%s", cmd->args[i]);
 		if (cmd->args[i + 1] && cmd->args[i][0] != '\0')
 			printf(" ");
 		i++;
