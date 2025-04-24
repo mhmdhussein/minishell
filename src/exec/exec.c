@@ -64,10 +64,8 @@ void	execute_command(t_cmd *cmd, t_shell *shell)
 	pid_t	pid;
 	char	*full_path;
 
-	if (!cmd || !cmd->args || !cmd->args[0] || !cmd->args[0][0])
-		return ;
 	full_path = find_executable_path(cmd->args[0], shell);
-	if (!full_path)
+	if (!full_path || cmd->args[0][0] == '\0')
 	{
 		dup2(shell->std_out, STDOUT_FILENO);
 		printf("bash: %s: command not found\n", cmd->args[0]);

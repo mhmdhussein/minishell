@@ -36,7 +36,7 @@ t_env	*create_env(char *key, char *value)
 		}
 	}
 	else
-		new_node->value = NULL;
+		new_node->value = ft_strdup("");
 	new_node->next = NULL;
 	return (new_node);
 }

@@ -26,9 +26,12 @@ t_env	*copy_env(t_env *env)
 		if (!new_node)
 			return (NULL);
 		new_node->key = ft_strdup(curr->key);
-		if (curr->value)
+		if (curr->equal == true)
 		{
-			new_node->value = ft_strdup(curr->value);
+			if (curr->value)
+				new_node->value = ft_strdup(curr->value);
+			else
+				new_node->value = ft_strdup("");
 			new_node->equal = true;
 		}
 		else
@@ -65,6 +68,8 @@ int	valid_key(char *assign)
 {
 	int	i;
 
+	if (!assign || !*assign)
+		return (0);
 	if (!is_var_char(assign[0], 1))
 		return (0);
 	i = 1;
@@ -113,24 +118,27 @@ void	export_arg(char *assign, t_shell *shell)
 {
 	char	*key;
 	char	*value;
+	char	*temp;
 	t_env	*new_env;
 
+	temp = ft_strdup(assign);
 	key = ft_strtok(assign, "=");
 	value = ft_strtok(NULL, "");
-	if (!valid_key(key))
+	if (!valid_key(key) || temp[0] == '=')
 	{
-		printf("bash: export: '%s': not a valid identifier\n", assign);
+		printf("bash: export: '%s': not a valid identifier\n", temp);
 		return ;
 	}
 	new_env = create_env(key, value);
 	if (!new_env)
 		return ;
-	if (value)
+	if (ft_strchr(temp, '='))
 		new_env->equal= true;
 	else
 		new_env->equal = false;
 	if (!update_existing(shell, new_env))
 		addtoenv(shell, new_env);
+	free(temp);
 }
 
 /* void	export_arg(char *assign, t_shell *shell)
