@@ -106,6 +106,14 @@ char	*expand_token(char *value, t_shell *shell)
 	return (result);
 }
 
+void	split_token(t_token **prev, t_token **curr)
+{
+	if ((*curr)->value[0] == '\"' || (*curr)->value[0] == '\'')
+		return ;
+	// call tokenize on curr->value, it will return new token list, then add it to the original token list
+	// using prev and curr
+}
+
 void	expand_variables(t_token *tokens, t_shell *shell)
 {
 	t_token	*curr;
@@ -126,6 +134,7 @@ void	expand_variables(t_token *tokens, t_shell *shell)
 		}
 		if ((!prev || prev->type != HEREDOC) && curr->value)
 		{
+			split_token(&prev, &curr);
 			temp = curr->value;
 			curr->value = remove_quotes(curr->value);
 			free(temp);

@@ -89,6 +89,7 @@ char			*copy_token(char *str, int start, int end);
 void			process_token(char *str, int token_start, int *ij, char **tokens);
 int				check_delimiter(char *str);
 char 			*remove_quotes(char *value);
+int				count_tokens(char *str);
 
 // Tokenize
 t_token			*tokenize(char *input);

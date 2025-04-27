@@ -114,6 +114,33 @@ void	addtoenv(t_shell *shell, t_env *env)
 	curr->next = env;
 }
 
+// char	*trim_value(char *value)
+// {
+// 	char	**split;
+// 	int		i;
+// 	char	*new_value;
+// 	char	*temp;
+
+// 	split = split_input(value);
+// 	if (!split)
+// 		return (NULL);
+// 	new_value = ft_strdup("");
+// 	if (!new_value)
+// 		return (NULL);
+// 	i = 0;
+// 	while (split[i])
+// 	{
+// 		temp = new_value;
+// 		new_value = ft_strjoin(new_value, split[i]);
+// 		if (split[i + 1])
+// 			new_value = appendchar(new_value, ' ');
+// 		free(temp);
+// 		i++;
+// 	}
+// 	free_double_array(split);
+// 	return (new_value);
+// }
+
 void	export_arg(char *assign, t_shell *shell)
 {
 	char	*key;
