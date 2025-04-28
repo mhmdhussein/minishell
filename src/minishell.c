@@ -231,7 +231,7 @@ int	main(int argc, char **argv, char **envp)
 	init_shell(&shell, envp);
 	while (shell.running)
 	{
-		input = readline("\033[37;41;1mmicroshell😭:\033[0m ");
+		input = readline("\033[37;41;1mmicroshell😭>\033[0m ");
 		if (!input)
 		{
 			printf("\n");
