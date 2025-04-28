@@ -65,6 +65,7 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->tokens = NULL;
 	shell->running = true;
 	shell->last_exit_status = 0;
+	shell->pipe_mode = false;
 	init_env(shell, envp);
 }
 
@@ -94,7 +95,7 @@ char	**detokenize(t_token *tokens)
 	i = 0;
 	while (curr)
 	{
-		args[i] = curr->value;
+		args[i] = ft_strdup(curr->value);
 		curr = curr->next;
 		i++;
 	}
@@ -114,6 +115,52 @@ void	print_tokens(t_token *start)
 	}
 }
 
+void	print_cmds(t_cmd *cmds)
+{
+	t_cmd	*curr;
+	int		i;
+
+	curr = cmds;
+	i = 1;
+	while (curr)
+	{
+		printf("Command %d:\n", i++);
+		for (int j = 0; curr->args[j]; j++)
+			printf("%s ", curr->args[j]);
+		printf("\n\n");
+		curr = curr->next;
+	}
+}
+
+void	remove_null(t_token **tokens)
+{
+	t_token	*curr;
+	t_token	*prev;
+
+	curr = *tokens;
+	prev = NULL;
+	while (curr)
+	{
+		if (!curr->value)
+		{
+			if (prev)
+				prev->next = curr->next;
+			else
+				*tokens = curr->next;
+			free(curr);
+			if (prev)
+				curr = prev->next;
+			else
+				curr = *tokens;
+		}
+		else
+		{
+			prev = curr;
+			curr = curr->next;
+		}
+	}
+}
+
 void	exec(t_shell *shell, char *input)
 {
 	char	**args;
@@ -125,30 +172,53 @@ void	exec(t_shell *shell, char *input)
 		return ;
 	shell->tokens = tokens;
 	expand_variables(shell->tokens, shell);
-	cmds = (t_cmd *)malloc(sizeof(t_cmd));
-	if (!cmds)
+	remove_null(&shell->tokens);
+	if (!shell->tokens)
 		return ;
-	cmds->input_fd = -1;
-	cmds->output_fd = -1;
-	shell->std_out = dup(STDOUT_FILENO);
-	shell->std_in = dup(STDIN_FILENO);
-	shell->cmds = cmds;
-	if (!redirections(shell, shell->cmds))
-		return ;
-	if (shell->tokens && shell->cmds->input_fd != -2)
+	if (check_pipes(shell->tokens) == -1)
 	{
-		args = detokenize(shell->tokens);
-		cmds->args = args;
-		cmds->next = NULL;
-		if (is_builtin(cmds->args[0]))
-			exec_builtin(cmds, shell);
-		else
-			execute_command(cmds, shell);
+		printf("bash: syntax error near unexpected token `|'\n");
+		return ;
 	}
-	dup2(shell->std_out, STDOUT_FILENO);
-	dup2(shell->std_in, STDIN_FILENO);
-	close(shell->std_in);
-	close(shell->std_out);
+	else if (check_pipes(shell->tokens) == 1)
+	{
+		shell->pipe_mode = true;
+		parse_commands(shell->tokens, shell);
+		shell->std_out = dup(STDOUT_FILENO);
+		handle_pipes(shell);
+		free_cmds(shell->cmds);
+		shell->cmds = NULL;
+	}
+	else
+	{
+		shell->pipe_mode = false;
+		cmds = (t_cmd *)malloc(sizeof(t_cmd));
+		if (!cmds)
+			return ;
+		cmds->input_fd = -1;
+		cmds->output_fd = -1;
+		shell->std_in = dup(STDIN_FILENO);
+		shell->std_out = dup(STDOUT_FILENO);
+		shell->cmds = cmds;
+		if (!redirections(shell, shell->cmds, &shell->tokens))
+			return ;
+		if (shell->tokens && shell->cmds->input_fd != -2)
+		{
+			args = detokenize(shell->tokens);
+			cmds->args = args;
+			cmds->next = NULL;
+			if (is_builtin(cmds->args[0]))
+				exec_builtin(cmds, shell);
+			else
+				execute_command(cmds, shell);
+		}
+		dup2(shell->std_out, STDOUT_FILENO);
+		dup2(shell->std_in, STDIN_FILENO);
+		close(shell->std_in);
+		close(shell->std_out);
+		free_cmds(shell->cmds);
+		shell->cmds = NULL;
+	}
 }
 
 int	main(int argc, char **argv, char **envp)

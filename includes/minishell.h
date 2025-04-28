@@ -61,8 +61,6 @@ typedef struct s_token
 typedef struct s_cmd
 {
 	char			**args;
-	char			*input_file;
-	char			*output_file;
 	int				input_fd;
 	int				output_fd;
 	bool			append;
@@ -79,6 +77,7 @@ typedef struct s_shell
 	int		last_exit_status;
 	int		std_out;
 	int		std_in;
+	bool	pipe_mode;
 }	t_shell;
 
 // Input
@@ -90,10 +89,15 @@ char			*copy_token(char *str, int start, int end);
 void			process_token(char *str, int token_start, int *ij, char **tokens);
 int				check_delimiter(char *str);
 char 			*remove_quotes(char *value);
+int				count_tokens(char *str);
 
 // Tokenize
 t_token			*tokenize(char *input);
 void			revert_var(t_token	**tokens);
+char			**detokenize(t_token *tokens);
+t_token			*create_token(char *split);
+void			add_token(t_token **head, t_token **newnode);
+void			print_tokens(t_token *start);
 
 // Expand
 void			check_quotes(char c, int *quote);
@@ -109,8 +113,13 @@ void			execute_command(t_cmd *cmd, t_shell *shell);
 char			*handle_dollar_quote_dollar(t_env *env);
 
 // Redirections
-int				redirections(t_shell *shell, t_cmd *cmd);
-void			handle_heredoc(t_shell *shell, t_cmd *cmd);
+int				redirections(t_shell *shell, t_cmd *cmd, t_token **tokens);
+void			handle_heredoc(t_shell *shell, t_cmd *cmd, t_token **tokens);
+
+// Pipes
+int				check_pipes(t_token *tokens);
+void			parse_commands(t_token	*tokens, t_shell *shell);
+void			handle_pipes(t_shell *shell);
 
 // Builtins
 void			ft_cd(t_cmd *cmd, t_env *env);

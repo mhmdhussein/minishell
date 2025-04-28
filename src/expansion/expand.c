@@ -45,6 +45,8 @@ char	*handle_variable(char *value, int *i, t_shell *shell, int quote)
 		return (ft_strdup(""));
 	else if ((value[(*i) + 1] == '\"' || value[(*i) + 1] == '\'') && quote == 2)
 		return (ft_strdup("$"));
+	if (value[(*i) + 1] == ':' || value[(*i) + 1] == '=')
+		return (ft_strdup("$"));
 	(*i)++;
 	if (value[*i] == '$')
 		return (ft_strdup("42"));
@@ -89,7 +91,7 @@ char	*expand_token(char *value, t_shell *shell)
 	while (value[i])
 	{
 		check_quotes(value[i], &quote);
-		if (value[i] == '$' && (quote == 0 || quote == 2 ) && value[i + 1])
+		if (value[i] == '$' && (quote == 0 || quote == 2 ) && value[i + 1] && value[i + 1] != ' ')
 		{
 			expanded = handle_variable(value, &i, shell, quote);
 			result = append_variable(result, expanded);
@@ -99,7 +101,17 @@ char	*expand_token(char *value, t_shell *shell)
 			result = appendchar(result, value[i]);
 		i++;
 	}
+	if (result[0] == '\0')
+		return (NULL);
 	return (result);
+}
+
+void	split_token(t_token **prev, t_token **curr)
+{
+	if ((*curr)->value[0] == '\"' || (*curr)->value[0] == '\'')
+		return ;
+	// call tokenize on curr->value, it will return new token list, then add it to the original token list
+	// using prev and curr
 }
 
 void	expand_variables(t_token *tokens, t_shell *shell)
@@ -120,8 +132,9 @@ void	expand_variables(t_token *tokens, t_shell *shell)
 			curr->value = expanded;
 			curr->type = WORD;
 		}
-		if (!prev || prev->type != HEREDOC)
+		if ((!prev || prev->type != HEREDOC) && curr->value)
 		{
+			split_token(&prev, &curr);
 			temp = curr->value;
 			curr->value = remove_quotes(curr->value);
 			free(temp);

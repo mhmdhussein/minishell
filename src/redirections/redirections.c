@@ -75,11 +75,11 @@ void	remove_redirection(t_token **tokens)
 	}
 }
 
-void	process_redirections(t_shell *shell, t_cmd *cmd)
+void	process_redirections(t_shell *shell, t_cmd *cmd, t_token **tokens)
 {
 	t_token	*curr;
 
-	curr = shell->tokens;
+	curr = *tokens;
 	while (curr)
 	{
 		if (cmd->input_fd == -2)
@@ -92,8 +92,8 @@ void	process_redirections(t_shell *shell, t_cmd *cmd)
 			process_append(curr, cmd);
 		if ((curr->type == IN || curr->type == OUT || curr->type == APPEND))
 		{
-			remove_redirection(&shell->tokens);
-			curr = shell->tokens;
+			remove_redirection(tokens);
+			curr = *tokens;
 		}
 		else
 			curr = curr->next;
@@ -104,22 +104,25 @@ void	process_redirections(t_shell *shell, t_cmd *cmd)
 		close(cmd->output_fd);
 }
 
-int	redirections(t_shell *shell, t_cmd *cmd)
+int	redirections(t_shell *shell, t_cmd *cmd, t_token **tokens)
 {
 	t_token	*curr;
 
-	curr = shell->tokens;
+	curr = *tokens;
 	while (curr)
 	{
 		if ((curr->type == IN || curr->type == OUT || curr->type == APPEND
 				|| curr->type == HEREDOC) && (!curr->next || curr->next->type != WORD))
 		{
-			printf("Syntax error\n"); // free
+			if (!curr->next)
+				printf("bash: syntax error near unexpected token `newline'\n");
+			else if (curr->next->type != WORD)
+				printf("bash: syntax error near unexpected token `%s'\n", curr->next->value); // free
 			return (0);
 		}
 		curr = curr->next;
 	}
-	handle_heredoc(shell, cmd);
-	process_redirections(shell, cmd);
+	handle_heredoc(shell, cmd, tokens);
+	process_redirections(shell, cmd, tokens);
 	return (1);
 }
