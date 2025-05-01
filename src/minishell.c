@@ -171,7 +171,7 @@ void	exec(t_shell *shell, char *input)
 	if (!tokens)
 		return ;
 	shell->tokens = tokens;
-	expand_variables(shell->tokens, shell);
+	expand_variables(&shell->tokens, shell);
 	remove_null(&shell->tokens);
 	if (!shell->tokens)
 		return ;

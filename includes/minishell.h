@@ -102,7 +102,7 @@ void			print_tokens(t_token *start);
 // Expand
 void			check_quotes(char c, int *quote);
 char			*appendchar(char *str, char c);
-void			expand_variables(t_token *tokens, t_shell *shell);
+void			expand_variables(t_token **tokens, t_shell *shell);
 int				is_var_char(char c, int first);
 char			*expand_token(char *value, t_shell *shell);
 

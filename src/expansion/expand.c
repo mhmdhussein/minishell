@@ -121,22 +121,31 @@ void	split_token(t_token **prev, t_token **curr, t_token **tokens)
 	else
 		*tokens = new_list;
 	new_curr = new_list;
-	while (new_curr->next)
+	while (new_curr)
+	{
+		if (new_curr->type == ENV_VAR)
+			new_curr->type = WORD;
+		if (!new_curr->next)
+			break ;
 		new_curr = new_curr->next;
+	}
 	new_curr->next = (*curr)->next;
 	free((*curr)->value);
 	free((*curr));
-	(*curr) = new_curr;
+	if ((*prev))
+		(*curr) = (*prev)->next;
+	else
+		(*curr) = *tokens;
 }
 
-void	expand_variables(t_token *tokens, t_shell *shell)
+void	expand_variables(t_token **tokens, t_shell *shell)
 {
 	t_token	*curr;
 	t_token	*prev;
 	char	*expanded;
 	char	*temp;
 
-	curr = tokens;
+	curr = *tokens;
 	prev = NULL;
 	while (curr)
 	{
@@ -145,6 +154,7 @@ void	expand_variables(t_token *tokens, t_shell *shell)
 		// and at the same time
 		// but if type is word, remove quotes normally
 		// ignore quotes of different types (quotes inside quotes)
+		// we decided to postpone working on this
 		if (curr->type == ENV_VAR)
 		{
 			expanded = expand_token(curr->value, shell);
@@ -152,9 +162,9 @@ void	expand_variables(t_token *tokens, t_shell *shell)
 			curr->value = expanded;
 			curr->type = WORD;
 			if ((!prev || prev->type != HEREDOC) && curr->value)
-				split_token(&prev, &curr, &tokens);
+				split_token(&prev, &curr, tokens);
 		}
-		else if ((!prev || prev->type != HEREDOC) && curr->value)
+		if ((!prev || prev->type != HEREDOC) && curr->value)
 		{
 			temp = curr->value;
 			curr->value = remove_quotes(curr->value);
