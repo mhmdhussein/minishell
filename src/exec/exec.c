@@ -59,12 +59,42 @@ static void	wait_for_child(pid_t pid, t_shell *shell)
 	shell->last_exit_status = WEXITSTATUS(status);
 }
 
+char	*check_absolute_relative_path(char *cmd, int *path_flag)
+{
+	struct stat	st;
+
+	if (!cmd)
+		return (NULL);
+	if (cmd[0] == '/' || cmd[0] == '.')
+	{
+		if (stat(cmd, &st) == 0 && S_ISDIR(st.st_mode))
+		{
+			*path_flag = 1;
+			printf("-bash: %s: Is a directory\n", cmd);
+		}
+		else if (access(cmd, F_OK | X_OK) == 0)
+			return (ft_strdup(cmd));
+		else
+		{
+			*path_flag = 1;
+			printf("-bash: %s: No such file or directory\n", cmd);
+		}
+	}
+	return (NULL);
+}
+
 void	execute_command(t_cmd *cmd, t_shell *shell)
 {
 	pid_t	pid;
 	char	*full_path;
+	int		path_flag;
 
-	full_path = find_executable_path(cmd->args[0], shell);
+	path_flag = 0;
+	full_path = check_absolute_relative_path(cmd->args[0], &path_flag);
+	if (path_flag == 1)
+		return ;
+	if (!full_path)
+		full_path = find_executable_path(cmd->args[0], shell);
 	if (!full_path || cmd->args[0][0] == '\0')
 	{
 		dup2(shell->std_out, STDOUT_FILENO);
