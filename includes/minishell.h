@@ -78,6 +78,8 @@ typedef struct s_shell
 	int		std_out;
 	int		std_in;
 	bool	pipe_mode;
+	char	*original_home;
+	char	*current_pwd;
 }	t_shell;
 
 // Input
@@ -122,12 +124,12 @@ void			parse_commands(t_token	*tokens, t_shell *shell);
 void			handle_pipes(t_shell *shell);
 
 // Builtins
-void			ft_cd(t_cmd *cmd, t_env *env);
+void			ft_cd(t_cmd *cmd, t_env *env, t_shell *shell);
 void			ft_echo(t_cmd *cmd);
 void			ft_env(t_env *env);
 void			ft_exit(t_cmd *cmd, t_shell *shell);
 void			ft_export(t_cmd *cmd, t_shell *shell);
-void			ft_pwd();
+void			ft_pwd(t_shell *shell);
 void			ft_unset(t_cmd *cmd, t_shell *shell);
 
 // Env

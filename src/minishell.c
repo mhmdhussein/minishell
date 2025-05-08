@@ -67,6 +67,8 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->last_exit_status = 0;
 	shell->pipe_mode = false;
 	init_env(shell, envp);
+	shell->original_home = ft_strdup(envget(shell->env, "HOME"));
+	shell->current_pwd = ft_strdup(envget(shell->env, "PWD"));
 }
 
 int	counttokens(t_token *tokens)

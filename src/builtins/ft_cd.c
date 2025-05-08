@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-void	set_old_pwd(t_env *env, char *old_pwd)
+void	set_old_pwd(t_env *env, char *old_pwd, t_shell *shell)
 {
 	envset(env, "OLDPWD", old_pwd);
 	free(old_pwd);
@@ -20,6 +20,8 @@ void	set_old_pwd(t_env *env, char *old_pwd)
 	if (old_pwd)
 	{
 		envset(env, "PWD", old_pwd);
+		free(shell->current_pwd);
+		shell->current_pwd = ft_strdup(old_pwd);
 		free(old_pwd);
 	}
 }
@@ -55,7 +57,19 @@ char	*get_home(t_env *env)
 	}
 }
 
-void	ft_cd(t_cmd *cmd, t_env *env)
+char	*expand_home(t_env *env, char *path, t_shell *shell)
+{
+	char	*home;
+	char	*expanded;
+
+	home = envget(env, "HOME");
+	if (!home)
+		home = shell->original_home;
+	expanded = ft_strjoin(home, (path + 1));
+	return (expanded);
+}
+
+void	ft_cd(t_cmd *cmd, t_env *env, t_shell *shell)
 {
 	const char	*path;
 	char		*old_pwd;
@@ -68,23 +82,22 @@ void	ft_cd(t_cmd *cmd, t_env *env)
 	path = cmd->args[1];
 	if (!path)
 		path = get_home(env);
+	else if (!ft_strncmp((char *)path, "~", 1))
+		path = expand_home(env, (char *)path, shell);
 	else if (!ft_strcmp((char *)path, "-"))
 		path = get_old_pwd(env, true);
 	else if (!ft_strcmp((char *)path, "--"))
 		path = get_old_pwd(env, false);
-	if (!path)
-	{
-		printf("no path\n");
+	if (!path || (cmd->args[1] && cmd->args[1][0] == '\0') || (path && path[0] == '\0'))
 		return ;
-	}
 	old_pwd = getcwd(NULL, 0);
 	if (!old_pwd)
 	{
-		printf("no oldpwd\n");
+		printf("chdir: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n");
 		return ;
 	}
 	if (chdir(path) == -1)
-		perror("cd");
+		printf("chdir: error while changing directory\n");
 	else
-		set_old_pwd(env, old_pwd);
+		set_old_pwd(env, old_pwd, shell);
 }

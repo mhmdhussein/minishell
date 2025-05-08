@@ -12,13 +12,15 @@
 
 #include "../../includes/minishell.h"
 
-void	ft_pwd()
+void	ft_pwd(t_shell *shell)
 {
 	char	*cwd;
 
-	cwd = getcwd(NULL, 0);
+	cwd = envget(shell->env, "PWD");
+	if (!cwd)
+		cwd = shell->current_pwd;
 	if (cwd)
 		printf("%s\n", cwd);
 	else
-		perror("getcwd() error");
+		printf("pwd: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n");
 }

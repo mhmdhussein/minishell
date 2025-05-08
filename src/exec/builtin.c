@@ -37,9 +37,9 @@ void	exec_builtin(t_cmd *cmd, t_shell *shell)
 	if (!ft_strcmp(cmd->args[0], "echo"))
 		ft_echo(cmd);
 	else if (!ft_strcmp(cmd->args[0], "cd"))
-		ft_cd(cmd, shell->env);
+		ft_cd(cmd, shell->env, shell);
 	else if (!ft_strcmp(cmd->args[0], "pwd"))
-		ft_pwd();
+		ft_pwd(shell);
 	else if (!ft_strcmp(cmd->args[0], "export"))
 		ft_export(cmd, shell);
 	else if (!ft_strcmp(cmd->args[0], "unset"))
