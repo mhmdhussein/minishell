@@ -60,7 +60,7 @@ void	ft_cd(t_cmd *cmd, t_env *env)
 	const char	*path;
 	char		*old_pwd;
 
-	if (cmd->args[2])
+	if (cmd->args[0] && cmd->args[1] && cmd->args[2])
 	{
 		printf("bash: cd: too many arguments\n");
 		return ;
