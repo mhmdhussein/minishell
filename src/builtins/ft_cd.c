@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rtraoui <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:03:45 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/01/14 18:08:46 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/05/08 14:37:33 by rtraoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,11 @@ void	ft_cd(t_cmd *cmd, t_env *env)
 	const char	*path;
 	char		*old_pwd;
 
+	if (cmd->args[2])
+	{
+		printf("bash: cd: too many arguments\n");
+		return ;
+	}
 	path = cmd->args[1];
 	if (!path)
 		path = get_home(env);
