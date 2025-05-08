@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rtraoui <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 16:30:32 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/01/30 12:27:05 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/05/08 18:19:00 by rtraoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ t_env	*create_env(char *key, char *value)
 	if (value)
 	{
 		new_node->value = ft_strdup(value);
+		new_node->equal = true;
 		if (!new_node->value)
 		{
 			free(new_node->key);
@@ -36,7 +37,10 @@ t_env	*create_env(char *key, char *value)
 		}
 	}
 	else
+	{
 		new_node->value = ft_strdup("");
+		new_node->equal = false;
+	}
 	new_node->next = NULL;
 	return (new_node);
 }
@@ -94,6 +98,7 @@ void	envset(t_env *env, char *key, char *value)
 		if (!ft_strcmp(curr->key, key))
 		{
 			curr->value = ft_strdup(value);
+			curr->equal = true;
 			return ;
 		}
 		curr = curr->next;

@@ -6,7 +6,7 @@
 /*   By: rtraoui <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:03:45 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/05/08 14:37:33 by rtraoui          ###   ########.fr       */
+/*   Updated: 2025/05/08 18:21:26 by rtraoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,16 @@ void	ft_cd(t_cmd *cmd, t_env *env)
 	else if (!ft_strcmp((char *)path, "--"))
 		path = get_old_pwd(env, false);
 	if (!path)
+	{
+		printf("no path\n");
 		return ;
+	}
 	old_pwd = getcwd(NULL, 0);
 	if (!old_pwd)
+	{
+		printf("no oldpwd\n");
 		return ;
+	}
 	if (chdir(path) == -1)
 		perror("cd");
 	else
