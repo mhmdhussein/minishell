@@ -74,6 +74,11 @@ char	*check_absolute_relative_path(char *cmd, int *path_flag)
 		}
 		else if (access(cmd, F_OK | X_OK) == 0)
 			return (ft_strdup(cmd));
+		else if (access(cmd, F_OK) == 0)
+		{
+			*path_flag = 1;
+			printf("-bash: %s: Permission denied\n", cmd);
+		}
 		else
 		{
 			*path_flag = 1;
