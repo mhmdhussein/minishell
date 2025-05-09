@@ -44,6 +44,23 @@ t_token	*extract_tokens(t_token *tokens, int i)
 	return (head);
 }
 
+void	decrement_shlvl(t_shell *shell)
+{
+	char	*shlvl;
+	int		lvl;
+
+	shlvl = envget(shell->env, "SHLVL");
+	if (!shlvl)
+		lvl = 0;
+	else
+	{
+		lvl = ft_atoi(shlvl) - 1;
+		if (lvl < 0)
+			lvl = 0;
+	}
+	envset(shell->env, "SHLVL", ft_itoa(lvl));
+}
+
 void	handle_pipes(t_shell *shell)
 {
 	t_cmd	*cmd;
@@ -65,6 +82,7 @@ void	handle_pipes(t_shell *shell)
 			return ;
 		else if (pid == 0)
 		{
+			decrement_shlvl(shell);
 			if (prev_fd != -1)
 			{
 				dup2(prev_fd, STDIN_FILENO);

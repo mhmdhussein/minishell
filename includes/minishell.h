@@ -151,4 +151,8 @@ void			free_tokens(t_token *head);
 void			free_env(t_env *env);
 void			free_cmds(t_cmd *cmds);
 
+// Shell
+void			increment_shlvl(t_shell *shell);
+
+
 #endif

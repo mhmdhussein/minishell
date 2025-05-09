@@ -69,6 +69,7 @@ void	init_shell(t_shell *shell, char **envp)
 	init_env(shell, envp);
 	shell->original_home = ft_strdup(envget(shell->env, "HOME"));
 	shell->current_pwd = ft_strdup(envget(shell->env, "PWD"));
+	increment_shlvl(shell);
 }
 
 int	counttokens(t_token *tokens)
@@ -221,6 +222,23 @@ void	exec(t_shell *shell, char *input)
 		free_cmds(shell->cmds);
 		shell->cmds = NULL;
 	}
+}
+
+void	increment_shlvl(t_shell *shell)
+{
+	char	*shlvl;
+	int		lvl;
+
+	shlvl = envget(shell->env, "SHLVL");
+	if (!shlvl)
+		lvl = 1;
+	else
+	{
+		lvl = ft_atoi(shlvl) + 1;
+		if (lvl < 0)
+			lvl = 0;
+	}
+	envset(shell->env, "SHLVL", ft_itoa(lvl));
 }
 
 int	main(int argc, char **argv, char **envp)
