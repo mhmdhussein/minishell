@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rtraoui <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 18:16:49 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/03/17 13:58:04 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/05/09 14:46:51 by rtraoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,19 +70,19 @@ char	*check_absolute_relative_path(char *cmd, int *path_flag)
 		if (stat(cmd, &st) == 0 && S_ISDIR(st.st_mode))
 		{
 			*path_flag = 1;
-			printf("-bash: %s: Is a directory\n", cmd);
+			printf("bash: %s: Is a directory\n", cmd);
 		}
 		else if (access(cmd, F_OK | X_OK) == 0)
 			return (ft_strdup(cmd));
 		else if (access(cmd, F_OK) == 0)
 		{
 			*path_flag = 1;
-			printf("-bash: %s: Permission denied\n", cmd);
+			printf("bash: %s: Permission denied\n", cmd);
 		}
 		else
 		{
 			*path_flag = 1;
-			printf("-bash: %s: No such file or directory\n", cmd);
+			printf("bash: %s: No such file or directory\n", cmd);
 		}
 	}
 	return (NULL);
