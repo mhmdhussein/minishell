@@ -41,6 +41,7 @@ SRC =	src/builtins/ft_cd.c \
 		src/pipes/pipes.c \
 		src/redirections/heredoc.c \
 		src/redirections/redirections.c \
+		src/utils/ft/ft_atoll.c \
 		src/utils/ft/ft_strcmp.c \
 		src/utils/ft/ft_strncpy.c \
 		src/utils/ft/ft_strndup.c \

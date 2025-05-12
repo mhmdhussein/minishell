@@ -117,6 +117,7 @@ char			*handle_dollar_quote_dollar(t_env *env);
 // Redirections
 int				redirections(t_shell *shell, t_cmd *cmd, t_token **tokens);
 void			handle_heredoc(t_shell *shell, t_cmd *cmd, t_token **tokens);
+int				redirection_syntax(t_shell *shell);
 
 // Pipes
 int				check_pipes(t_token *tokens);
@@ -144,6 +145,7 @@ char			**env_to_array(t_env *env);
 int				ft_strcmp(char *str1, char *str2);
 char			*ft_strtok(char *str, const char *delim);
 t_env			*merge_sort(t_env *env);
+long long		ft_atoll(const char *nptr);
 
 // Free
 void			free_double_array(char **array);

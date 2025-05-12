@@ -188,6 +188,8 @@ void	exec(t_shell *shell, char *input)
 		shell->pipe_mode = true;
 		parse_commands(shell->tokens, shell);
 		shell->std_out = dup(STDOUT_FILENO);
+		if (!redirection_syntax(shell))
+			return ;
 		handle_pipes(shell);
 		free_cmds(shell->cmds);
 		shell->cmds = NULL;
@@ -204,7 +206,14 @@ void	exec(t_shell *shell, char *input)
 		shell->std_out = dup(STDOUT_FILENO);
 		shell->cmds = cmds;
 		if (!redirections(shell, shell->cmds, &shell->tokens))
+		{
+			dup2(shell->std_out, STDOUT_FILENO);
+			dup2(shell->std_in, STDIN_FILENO);
+			close(shell->std_in);
+			close(shell->std_out);
+			shell->cmds = NULL;
 			return ;
+		}
 		if (shell->tokens && shell->cmds->input_fd != -2)
 		{
 			args = detokenize(shell->tokens);

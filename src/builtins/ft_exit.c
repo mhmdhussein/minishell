@@ -17,15 +17,63 @@ int	ft_isnum(char *str)
 	int		i;
 
 	i = 0;
-	if (str[i] == 43 || str[i] == 45)
+	while (*(str + i) == ' ' || *(str + i) == '\f' || *(str + i) == '\n'
+		|| *(str + i) == '\r' || *(str + i) == '\t' || *(str + i) == '\v')
+		i++;
+	if (str[i] == '+' || str[i] == '-')
 		i++;
 	while (str[i])
 	{
-		if (str[i] < 48 || str[i] > 57)
+		if (str[i] < '0' || str[i] > '9')
 			return (0);
 		i++;
 	}
 	return (1);
+}
+
+int	check_range_nb(char *str, bool neg)
+{
+	char	*max;
+	char	*min;
+
+	max = "9223372036854775807";
+	min = "9223372036854775808";
+	if (neg)
+	{
+		if (ft_strcmp(str, min) > 0)
+			return (0);
+		return (1);
+	}
+	else
+	{
+		if (ft_strcmp(str, max) > 0)
+			return (0);
+		return (1);
+	}
+}
+
+int	check_exit_nb(char *str)
+{
+	int		i;
+	bool	neg;
+
+	i = 0;
+	neg = false;
+	while (*(str + i) == ' ' || *(str + i) == '\f' || *(str + i) == '\n'
+		|| *(str + i) == '\r' || *(str + i) == '\t' || *(str + i) == '\v')
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			neg = true;
+		i++;
+	}
+	if (ft_strlen(str + i) <= 18)
+		return (1);
+	else if (ft_strlen(str + i) > 19)
+		return (0);
+	else
+		return (check_range_nb((str + i), neg));
 }
 
 void	ft_exit(t_cmd *cmd, t_shell *shell)
@@ -37,7 +85,7 @@ void	ft_exit(t_cmd *cmd, t_shell *shell)
 		printf("exit\n");
 	if (cmd->args[1])
 	{
-		if (!ft_isnum(cmd->args[1]))
+		if (!ft_isnum(cmd->args[1]) || !check_exit_nb(cmd->args[1]))
 		{
 			printf("bash: exit: %s: numeric argument required\n", cmd->args[1]);
 			exit_code = 255;
