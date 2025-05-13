@@ -189,7 +189,7 @@ void	exec(t_shell *shell, char *input)
 		parse_commands(shell->tokens, shell);
 		shell->std_out = dup(STDOUT_FILENO);
 		if (!redirection_syntax(shell))
-			return ;
+			{shell->tokens = NULL; return ;}
 		handle_pipes(shell);
 		free_cmds(shell->cmds);
 		shell->cmds = NULL;

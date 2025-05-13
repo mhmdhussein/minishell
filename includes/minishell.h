@@ -118,6 +118,7 @@ char			*handle_dollar_quote_dollar(t_env *env);
 int				redirections(t_shell *shell, t_cmd *cmd, t_token **tokens);
 void			handle_heredoc(t_shell *shell, t_cmd *cmd, t_token **tokens);
 int				redirection_syntax(t_shell *shell);
+void			process_heredoc_special(t_token *heredoc, t_shell *shell);
 
 // Pipes
 int				check_pipes(t_token *tokens);

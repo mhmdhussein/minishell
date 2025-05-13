@@ -37,6 +37,7 @@ void	process_heredoc(t_token *heredoc, t_cmd *cmd, int std_out, t_shell *shell)
 	int		tmp_fd;
 	char	*line;
 	bool	expand;
+	int		pipe_fd;
 
 	expand = true;
 	tmpfile = create_tmp();
@@ -48,6 +49,8 @@ void	process_heredoc(t_token *heredoc, t_cmd *cmd, int std_out, t_shell *shell)
 		expand = false;
 	cmd->delim = remove_quotes(cmd->delim);
 	dup2(shell->std_in, STDIN_FILENO);
+	pipe_fd = dup(STDOUT_FILENO);
+	dup2(shell->std_out, STDOUT_FILENO);
 	while (1)
 	{
 		write(std_out, "> ", 2);
@@ -76,6 +79,7 @@ void	process_heredoc(t_token *heredoc, t_cmd *cmd, int std_out, t_shell *shell)
 	if (cmd->input_fd == -1)
 		return; // handle error
 	dup2(cmd->input_fd, STDIN_FILENO);
+	dup2(pipe_fd, STDOUT_FILENO);
 	free(line);
 	unlink(tmpfile);
 	free(tmpfile);
@@ -110,18 +114,40 @@ void	remove_heredoc(t_token **tokens)
 	}
 }
 
+int	heredoc_count(t_token *tokens)
+{
+	t_token	*curr;
+	int		count;
+
+	curr = tokens;
+	count = 0;
+	while (curr)
+	{
+		if (curr->type == HEREDOC)
+			count++;
+		curr = curr->next;
+	}
+	return (count);
+}
+
 void	handle_heredoc(t_shell *shell, t_cmd *cmd, t_token **tokens)
 {
 	t_token	*curr;
+	int		heredocs;
 
 	curr = *tokens;
+	heredocs = heredoc_count(*tokens);
 	while (curr)
 	{
 		if (curr->type == HEREDOC && curr->next && curr->next->type == WORD)
 		{
-			process_heredoc(curr, cmd, shell->std_out, shell);
+			if (heredocs != 1)
+				process_heredoc_special(curr, shell);
+			else
+				process_heredoc(curr, cmd, shell->std_out, shell);
 			remove_heredoc(tokens);
 			curr = *tokens;
+			heredocs--;
 		}
 		else
 			curr = curr->next;

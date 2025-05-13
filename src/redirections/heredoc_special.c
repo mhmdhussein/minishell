@@ -12,18 +12,21 @@
 
 #include "../../includes/minishell.h"
 
-void	process_heredoc_special(t_token *heredoc)
+void	process_heredoc_special(t_token *heredoc, t_shell *shell)
 {
 	char	*line;
+	int		pipe_fd;
 
 	heredoc->next->value = remove_quotes(heredoc->next->value);
+	pipe_fd = dup(STDOUT_FILENO);
+	dup2(shell->std_out, STDOUT_FILENO);
 	while (1)
 	{
-		printf("> ");
+		write(shell->std_out, "> ", 2);
 		line = readline("");
 		if (!*line)
 		{
-			printf("\n");
+			write(shell->std_out, "\n", 1);
 			continue ;
 		}
 		if (!ft_strcmp(line, heredoc->next->value))
@@ -33,6 +36,7 @@ void	process_heredoc_special(t_token *heredoc)
 		}
 		free(line);
 	}
+	dup2(pipe_fd, STDOUT_FILENO);
 }
 
 void	handle_heredoc_special(t_shell *shell)
@@ -44,7 +48,7 @@ void	handle_heredoc_special(t_shell *shell)
 	{
 		if (curr->type == HEREDOC)
 		{
-			process_heredoc_special(curr);
+			process_heredoc_special(curr, shell);
 			curr = curr->next;
 		}
 		curr = curr->next;
