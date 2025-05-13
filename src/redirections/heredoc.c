@@ -117,7 +117,7 @@ void	handle_heredoc(t_shell *shell, t_cmd *cmd, t_token **tokens)
 	curr = *tokens;
 	while (curr)
 	{
-		if (curr->type == HEREDOC)
+		if (curr->type == HEREDOC && curr->next && curr->next->type == WORD)
 		{
 			process_heredoc(curr, cmd, shell->std_out, shell);
 			remove_heredoc(tokens);

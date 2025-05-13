@@ -39,6 +39,7 @@ SRC =	src/builtins/ft_cd.c \
 		src/input/tokenization/revert.c \
 		src/input/tokenization/tokenize.c \
 		src/pipes/pipes.c \
+		src/redirections/heredoc_special.c \
 		src/redirections/heredoc.c \
 		src/redirections/redirections.c \
 		src/utils/ft/ft_atoll.c \

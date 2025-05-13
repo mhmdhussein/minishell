@@ -104,28 +104,6 @@ void	process_redirections(t_shell *shell, t_cmd *cmd, t_token **tokens)
 		close(cmd->output_fd);
 }
 
-int	redirection_syntax(t_shell *shell)
-{
-	t_token	*curr;
-
-	curr = shell->tokens;
-	while (curr)
-	{
-		if ((curr->type == IN || curr->type == OUT || curr->type == APPEND
-				|| curr->type == HEREDOC) && (!curr->next || curr->next->type != WORD))
-		{
-			if (!curr->next)
-				printf("bash: syntax error near unexpected token `newline'\n");
-			else if (curr->next->type != WORD)
-				printf("bash: syntax error near unexpected token `%s'\n", curr->next->value); // free
-
-			return (0);
-		}
-		curr = curr->next;
-	}
-	return (1);
-}
-
 int	redirections(t_shell *shell, t_cmd *cmd, t_token **tokens)
 {
 	t_token	*curr;

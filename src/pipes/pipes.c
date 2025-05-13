@@ -61,6 +61,28 @@ void	decrement_shlvl(t_shell *shell)
 	envset(shell->env, "SHLVL", ft_itoa(lvl));
 }
 
+int	has_heredoc(t_shell *shell, int i)
+{
+	t_token	*curr;
+
+	if (!shell->tokens)
+		return (0);
+	curr = shell->tokens;
+	while (i)
+	{
+		if (curr->type == PIPE)
+			i--;
+		curr = curr->next;
+	}
+	while (curr && curr->type != PIPE)
+	{
+		if (curr->type == HEREDOC)
+			return (1);
+		curr = curr->next;
+	}
+	return (0);
+}
+
 void	handle_pipes(t_shell *shell)
 {
 	t_cmd	*cmd;
@@ -111,6 +133,8 @@ void	handle_pipes(t_shell *shell)
 			if (cmd->next)
 				close(pipe_fd[1]);
 			prev_fd = pipe_fd[0];
+			if (has_heredoc(shell, i))
+				wait(&shell->last_exit_status);
 			cmd = cmd->next;
 		}
 		i++;
