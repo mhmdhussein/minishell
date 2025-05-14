@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:51:38 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/03/17 12:33:07 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/05/14 14:53:41 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,9 @@ char *remove_quotes(char *value)
 	i = 0;
 	while (value[i])
 	{
-		if (value[i] == '\'' && quote == 0)
+		if (value[i] == '\\' && (value[i + 1] == '\'' || value[i + 1] == '\"'))
+			result = appendchar(result, value[++i]);
+		else if (value[i] == '\'' && quote == 0)
 			quote = 1;
 		else if (value[i] == '\'' && quote == 1)
 			quote = 0;

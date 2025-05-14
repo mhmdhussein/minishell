@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:23:07 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/03/17 12:34:44 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/05/14 15:11:28 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,25 @@ char	*extract_variable_name(char *value, int *i)
 	return (var_name);
 }
 
+char	*keep_quotations(char *value)
+{
+	char	*result;
+	int		i;
+
+	result = ft_strdup(value);
+	if (!result)
+		return (NULL);
+	i = 0;
+	while (value[i])
+	{
+		if (value[i] == '\'' || value[i] == '\"')
+			result = appendchar(result, '\\');
+		result = appendchar(result, value[i]);
+		i++;
+	}
+	return (result);
+}
+
 char	*handle_variable(char *value, int *i, t_shell *shell, int quote)
 {
 	char	*var_name;
@@ -59,8 +78,10 @@ char	*handle_variable(char *value, int *i, t_shell *shell, int quote)
 		return (ft_strdup("$")); //?
 	var_value = envget(shell->env, var_name);
 	free(var_name);
-	if (var_value)
+	if (var_value && !(ft_strchr(var_value, '\'') || ft_strchr(var_value, '\"')))
 		return (ft_strdup(var_value));
+	else if (var_value && (ft_strchr(var_value, '\'') || ft_strchr(var_value, '\"')))
+		return (keep_quotations(var_value));
 	else
 		return (ft_strdup(""));
 }

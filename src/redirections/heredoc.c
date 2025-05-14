@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 13:45:57 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/03/29 13:45:57 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/05/14 14:25:11 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,34 @@ char	*create_tmp(void)
 	return (name);
 }
 
+char *remove_quotes_heredoc(char *value)
+{
+	char	*result;
+	int		quote;
+	int		i;
+
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+	quote = 0;
+	i = 0;
+	while (value[i])
+	{
+		if (value[i] == '\'' && quote == 0)
+			quote = 1;
+		else if (value[i] == '\'' && quote == 1)
+			quote = 0;
+		else if (value[i] == '\"' && quote == 0)
+			quote = 2;
+		else if (value[i] == '\"' && quote == 2)
+			quote = 0;
+		else if (!(value[i] == '$' && (value[i + 1] == '\"' || value[i + 1] == '\'') && quote == 0 && value[i - 1] != '$'))
+			result = appendchar(result, value[i]);
+		i++;
+	}
+	return (result);
+}
+
 void	process_heredoc(t_token *heredoc, t_cmd *cmd, int std_out, t_shell *shell)
 {
 	char	*tmpfile;
@@ -47,7 +75,7 @@ void	process_heredoc(t_token *heredoc, t_cmd *cmd, int std_out, t_shell *shell)
 	cmd->delim = heredoc->next->value;
 	if (ft_strchr(cmd->delim, '\"') || ft_strchr(cmd->delim, '\''))
 		expand = false;
-	cmd->delim = remove_quotes(cmd->delim);
+	cmd->delim = remove_quotes_heredoc(cmd->delim);
 	dup2(shell->std_in, STDIN_FILENO);
 	pipe_fd = dup(STDOUT_FILENO);
 	dup2(shell->std_out, STDOUT_FILENO);
@@ -65,6 +93,7 @@ void	process_heredoc(t_token *heredoc, t_cmd *cmd, int std_out, t_shell *shell)
 		if (expand)
 		{
 			expanded_line = expand_token(line, shell);
+
 			write(tmp_fd, expanded_line, ft_strlen(expanded_line));
 			free(expanded_line);
 		}
@@ -80,7 +109,7 @@ void	process_heredoc(t_token *heredoc, t_cmd *cmd, int std_out, t_shell *shell)
 		return; // handle error
 	dup2(cmd->input_fd, STDIN_FILENO);
 	dup2(pipe_fd, STDOUT_FILENO);
-	free(line);
+	//free(line);
 	unlink(tmpfile);
 	free(tmpfile);
 	close(tmp_fd);

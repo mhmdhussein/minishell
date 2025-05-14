@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rtraoui <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:33:59 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/05/08 15:45:59 by rtraoui          ###   ########.fr       */
+/*   Updated: 2025/05/14 14:22:19 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,8 @@ void	exec(t_shell *shell, char *input)
 		return ;
 	if (check_pipes(shell->tokens) == -1)
 	{
+		if (!redirection_syntax(shell))
+			{shell->tokens = NULL; shell->cmds = NULL; return ;}
 		printf("bash: syntax error near unexpected token `|'\n");
 		return ;
 	}
@@ -189,7 +191,7 @@ void	exec(t_shell *shell, char *input)
 		parse_commands(shell->tokens, shell);
 		shell->std_out = dup(STDOUT_FILENO);
 		if (!redirection_syntax(shell))
-			{shell->tokens = NULL; return ;}
+			{shell->tokens = NULL; shell->cmds = NULL; return ;}
 		handle_pipes(shell);
 		free_cmds(shell->cmds);
 		shell->cmds = NULL;
@@ -202,6 +204,8 @@ void	exec(t_shell *shell, char *input)
 			return ;
 		cmds->input_fd = -1;
 		cmds->output_fd = -1;
+		cmds->args = NULL;
+		cmds->next = NULL;
 		shell->std_in = dup(STDIN_FILENO);
 		shell->std_out = dup(STDOUT_FILENO);
 		shell->cmds = cmds;
