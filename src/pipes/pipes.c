@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 15:01:36 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/04/05 15:01:36 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/05/18 15:17:56 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ void	handle_pipes(t_shell *shell)
 			return ;
 		else if (pid == 0)
 		{
+			restoresignals();
 			decrement_shlvl(shell);
 			if (prev_fd != -1)
 			{
@@ -128,6 +129,7 @@ void	handle_pipes(t_shell *shell)
 		}
 		else
 		{
+			ignoresignals();
 			if (prev_fd != -1)
 				close(prev_fd);
 			if (cmd->next)
@@ -135,6 +137,7 @@ void	handle_pipes(t_shell *shell)
 			prev_fd = pipe_fd[0];
 			if (has_heredoc(shell, i))
 				wait(&shell->last_exit_status);
+			setupsignals();
 			cmd = cmd->next;
 		}
 		i++;

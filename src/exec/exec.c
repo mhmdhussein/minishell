@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rtraoui <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 18:16:49 by mohhusse          #+#    #+#             */
-/*   Updated: 2025/05/09 14:46:51 by rtraoui          ###   ########.fr       */
+/*   Updated: 2025/05/18 15:39:53 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ static void	execute_child_process(t_cmd *cmd, t_shell *shell, char *full_path)
 {
 	char	**env_array;
 
+	restoresignals();
 	env_array = env_to_array(shell->env);
 	execve(full_path, cmd->args, env_array);
 	perror("execve");
@@ -55,7 +56,9 @@ static void	wait_for_child(pid_t pid, t_shell *shell)
 {
 	int		status;
 
+	ignoresignals();
 	waitpid(pid, &status, 0);
+	setupsignals();
 	shell->last_exit_status = WEXITSTATUS(status);
 }
 

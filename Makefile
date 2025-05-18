@@ -42,6 +42,7 @@ SRC =	src/builtins/ft_cd.c \
 		src/redirections/heredoc_special.c \
 		src/redirections/heredoc.c \
 		src/redirections/redirections.c \
+		src/signals/signals.c \
 		src/utils/ft/ft_atoll.c \
 		src/utils/ft/ft_strcmp.c \
 		src/utils/ft/ft_strncpy.c \

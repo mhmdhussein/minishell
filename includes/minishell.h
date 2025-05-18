@@ -6,7 +6,7 @@
 /*   By: mohhusse <mohhusse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 23:09:17 by fel-ghaz          #+#    #+#             */
-/*   Updated: 2025/03/17 13:36:54 by mohhusse         ###   ########.fr       */
+/*   Updated: 2025/05/18 15:17:58 by mohhusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,5 +157,9 @@ void			free_cmds(t_cmd *cmds);
 // Shell
 void			increment_shlvl(t_shell *shell);
 
-
+//signals
+void	handle_sigint(int sig);
+void	setupsignals(void);
+void	restoresignals(void);
+void	ignoresignals(void);
 #endif
