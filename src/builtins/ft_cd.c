@@ -72,18 +72,18 @@ char	*expand_home(t_env *env, char *path, t_shell *shell)
 char	*slice_end(char *str)
 {
 	char	*end;
-	int		end_len;
-	int		str_len;
 	char	*result;
+	int		len;
 
 	end = ft_strrchr(str, '/');
-	end_len = ft_strlen(end);
-	str_len = ft_strlen(str);
-	result = (char *)malloc(sizeof(char) * (str_len - end_len + 1));
+	if (!end)
+		return (ft_strdup(str));
+	len = ft_strlen(str) - ft_strlen(end);
+	result = (char *)malloc(len + 1);
 	if (!result)
 		return (NULL);
-	ft_memcpy(result, str, str_len - end_len);
-	result[str_len - end_len + 1] = '\0';
+	ft_memcpy(result, str, len);
+	result[len] = '\0';
 	return (result);
 }
 
@@ -126,10 +126,7 @@ void	ft_cd(t_cmd *cmd, t_env *env, t_shell *shell)
 			old_pwd = envget(env, "PWD");
 			envset(shell->env, "OLDPWD", old_pwd);
 			old_pwd = slice_end(old_pwd);
-			//if (access(old_pwd, F_OK) == 0) // check if directory
-			//	{chdir(old_pwd); printf("hi\n");}
 			envset(shell->env, "PWD", old_pwd);
-			printf("%s\n", old_pwd);
 			free(shell->current_pwd);
 			shell->current_pwd = ft_strdup(old_pwd);
 		}
