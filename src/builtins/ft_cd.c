@@ -69,6 +69,24 @@ char	*expand_home(t_env *env, char *path, t_shell *shell)
 	return (expanded);
 }
 
+char	*slice_end(char *str)
+{
+	char	*end;
+	int		end_len;
+	int		str_len;
+	char	*result;
+
+	end = ft_strrchr(str, '/');
+	end_len = ft_strlen(end);
+	str_len = ft_strlen(str);
+	result = (char *)malloc(sizeof(char) * (str_len - end_len + 1));
+	if (!result)
+		return (NULL);
+	ft_memcpy(result, str, str_len - end_len);
+	result[str_len - end_len + 1] = '\0';
+	return (result);
+}
+
 void	ft_cd(t_cmd *cmd, t_env *env, t_shell *shell)
 {
 	const char	*path;
@@ -93,7 +111,32 @@ void	ft_cd(t_cmd *cmd, t_env *env, t_shell *shell)
 	old_pwd = getcwd(NULL, 0);
 	if (!old_pwd)
 	{
-		printf("chdir: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n");
+		// if (!ft_strcmp((char *)path, ".."))
+		// {
+		// 	old_pwd = envget(env, "PWD");
+		// 	envset(shell->env, "OLDPWD", old_pwd);
+		// 	old_pwd = ft_strjoin(old_pwd, "/..");
+		// 	if (access(old_pwd, F_OK) == 0) // check if directory
+		// 		{chdir(".."); printf("hi\n");}
+		// 	else
+		// 		envset(shell->env, "PWD", old_pwd);
+		// }
+		if (!ft_strcmp((char *)path, ".."))
+		{
+			old_pwd = envget(env, "PWD");
+			envset(shell->env, "OLDPWD", old_pwd);
+			old_pwd = slice_end(old_pwd);
+			//if (access(old_pwd, F_OK) == 0) // check if directory
+			//	{chdir(old_pwd); printf("hi\n");}
+			envset(shell->env, "PWD", old_pwd);
+			printf("%s\n", old_pwd);
+			free(shell->current_pwd);
+			shell->current_pwd = ft_strdup(old_pwd);
+		}
+		if (access(old_pwd, F_OK) == 0)
+			{chdir(old_pwd); free(old_pwd);}
+		else
+			printf("chdir: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n");
 		return ;
 	}
 	if (chdir(path) == -1)
