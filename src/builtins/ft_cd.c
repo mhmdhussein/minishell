@@ -131,8 +131,6 @@ void	ft_cd(t_cmd *cmd, t_env *env, t_shell *shell)
 		|| (path && !check_path(path)))
 		return ;
 	old_pwd = getcwd(NULL, 0);
-	if (!old_pwd && !cmd->args[1])
-		old_pwd = ft_strdup(envget(env, "PWD"));
 	if (!old_pwd)
 	{
 		old_pwd = envget(env, "PWD");
