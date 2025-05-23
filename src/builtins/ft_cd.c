@@ -26,16 +26,37 @@ void	set_old_pwd(t_env *env, char *old_pwd, t_shell *shell)
 	}
 }
 
+int	check_path(const char *path)
+{
+	struct stat	st;
+
+	if (!path)
+		return (0);
+	else if (access(path, F_OK) != 0)
+	{
+		printf("-bash: cd: %s: No such file or directory\n", path);
+		return (0);
+	}
+	else if (stat(path, &st) == 0 && !S_ISDIR(st.st_mode))
+	{
+		printf("-bash: cd: %s: Not a directory\n", path);
+		return (0);
+	}
+	return (1);
+}
+
 char	*get_old_pwd(t_env *env, bool print)
 {
-	char	*path;
+	char		*path;
 
 	path = envget(env, "OLDPWD");
 	if (!path)
 	{
-		fprintf(stderr, "cd: OLDPWD not set\n");
+		printf("cd: OLDPWD not set\n");
 		return (NULL);
 	}
+	else if (!check_path(path))
+		return (NULL);
 	if (print)
 		printf("%s\n", path);
 	return (path);
@@ -106,35 +127,28 @@ void	ft_cd(t_cmd *cmd, t_env *env, t_shell *shell)
 		path = get_old_pwd(env, true);
 	else if (!ft_strcmp((char *)path, "--"))
 		path = get_old_pwd(env, false);
-	if (!path || (cmd->args[1] && cmd->args[1][0] == '\0') || (path && path[0] == '\0'))
+	if (!path || (cmd->args[1] && cmd->args[1][0] == '\0') || (path && path[0] == '\0')
+		|| (path && !check_path(path)))
 		return ;
 	old_pwd = getcwd(NULL, 0);
+	if (!old_pwd && !cmd->args[1])
+		old_pwd = ft_strdup(envget(env, "PWD"));
 	if (!old_pwd)
 	{
-		// if (!ft_strcmp((char *)path, ".."))
-		// {
-		// 	old_pwd = envget(env, "PWD");
-		// 	envset(shell->env, "OLDPWD", old_pwd);
-		// 	old_pwd = ft_strjoin(old_pwd, "/..");
-		// 	if (access(old_pwd, F_OK) == 0) // check if directory
-		// 		{chdir(".."); printf("hi\n");}
-		// 	else
-		// 		envset(shell->env, "PWD", old_pwd);
-		// }
+		old_pwd = envget(env, "PWD");
 		if (!ft_strcmp((char *)path, ".."))
 		{
-			old_pwd = envget(env, "PWD");
 			envset(shell->env, "OLDPWD", old_pwd);
 			old_pwd = slice_end(old_pwd);
 			envset(shell->env, "PWD", old_pwd);
 			free(shell->current_pwd);
 			shell->current_pwd = ft_strdup(old_pwd);
+			if (access(old_pwd, F_OK) == 0)
+				{chdir(old_pwd); free(old_pwd);}
+			else
+				printf("chdir: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n");
+			return ;
 		}
-		if (access(old_pwd, F_OK) == 0)
-			{chdir(old_pwd); free(old_pwd);}
-		else
-			printf("chdir: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n");
-		return ;
 	}
 	if (chdir(path) == -1)
 		printf("chdir: error while changing directory\n");
